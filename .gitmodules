@@ -1,0 +1,3 @@
+[submodule "stm8_eforth"]
+	path = stm8_eforth
+	url = https://github.com/picatout/stm8_eforth
