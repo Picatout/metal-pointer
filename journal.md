@@ -1,5 +1,9 @@
 ### 2023-03-03
 
+* Mise à jour du [readme.md](readme.md)
+
+* Création du dépot sur [https://github.com/picatout/metal-pointer](https://github.com/picatout/metal-pointer)
+
 * Modification du circuit pour ajouter un cristal de 12Mhz pour la carte NUCLEO-S207K8
 
 * Création du programme [clk-switch.bas](clk-switch.bas) qui permet de commuter de la carte NUCLEO 
