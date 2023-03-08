@@ -4,11 +4,11 @@ This is a pin point metal detector using a NUCLEO-8S207K8 module with [stm8_tbi]
 
 The Tiny BASIC application  [metal-detector.bas](metal-detector.bas)
  
-## Schematic, version 1
+## Schematic, version 2
 
 ![metal-detector-schematic.png](metal-detector-schematic.png)
 
-## prototype, version 2
+## prototype, version 1
 
 ![prototype.png](prototype.png)
 
