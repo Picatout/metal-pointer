@@ -34,6 +34,8 @@ When a metal object come close to **L1** it modify the inductance then **C6-L1**
 
 ![metal-detector-schematic(R3).png](metal-detector-schematic(R3).png)
 
+[short video demo](https://youtube.com/shorts/o5VKi-kE5qI?feature=share) 
+
 ### Revision 2 
 
 *  Modified schematic and [metal-detector.bas](metal-detector.bas) to improve sensitivity. 
