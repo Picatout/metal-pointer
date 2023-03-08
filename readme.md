@@ -8,7 +8,7 @@ The Tiny BASIC application  [metal-detector.bas](metal-detector.bas)
 
 ![metal-detector-schematic.png](metal-detector-schematic.png)
 
-## prototype, version 1
+## prototype, version 2
 
 ![prototype.png](prototype.png)
 
