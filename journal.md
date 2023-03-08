@@ -1,3 +1,9 @@
+### 2023-03-07
+
+* Version 1 révision 2
+    * Changement au circuit ainsi qu'au programme [metal-detector.bas](metal-detector.bas)
+
+
 ### 2023-03-03
 
 * Mise à jour du [readme.md](readme.md)

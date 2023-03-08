@@ -30,16 +30,19 @@ NEW
 399 ' Search frequency at which LC impedance is minimum
 400 CALIB
 401 LET M=ADCREAD(3)
-402 ? " Try to minimize 'R' value, typing 'U','D','Q'uit"
-403 DO 
-404 GET A: LET A=A AND $DF
+402 ? " Try to minimize 'R' value, typing 'U'p,'D'own,'P'ause,'Q'uit"
+403 GOSUB SAVE.CPOS 
+404 DO 
+405 GET A: LET A=A AND $DF
 406 IF A=ASC(\U) LET D=1 : GOTO 410 
 408 IF A=ASC(\D) LET D=-1
+409 IF A=ASC(\P) LET D=0 
 410 LET F=F+D 
 440 GOSUB PWM.FREQ : PAUSE 100 
 450 LET R=ADCREAD(3)
-454 IF R<M : LET M=R,N=F : ? "*** smallest R is for F=";F  
-460 ? "F=";F;" R=";R    
+452 GOSUB REST.CPOS 
+454 ? "F=";F;" R=";R 
+460 IF R<M : LET M=R,N=F : ? " *** smallest R is for F=";F  
 490 UNTIL A=ASC(\Q) 
 500 RETURN 
 
@@ -66,4 +69,15 @@ NEW
 736 POKE UART3.BBR2,8:POKE UART3.BRR1,6 : '0x68 
 740 BSET UART3.CR1,1 : ' turn on UART
 744 RETURN 
+
+799 ' save terminal cursor positon 
+800 SAVE.CPOS 
+802 ? CHAR(27)"[s"
+804 RETURN 
+809 ' restore cursor position from saved
+810 REST.CPOS 
+812 ? CHAR(27)"[u"
+814 RETURN 
+
+
 

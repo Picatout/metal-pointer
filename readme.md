@@ -26,4 +26,10 @@ When a metal object come close to **L1** it modify the inductance then **C4-L1**
 
 **L1** is a commercial inductor wound on a ferrite core. 
 
+## Révisions 
+
+### Révision 2 
+
+*  J'ai modifié la schématique et le programme [metal-detector.bas](metal-detector.bas) pour améliorer la sensibilité. 
+
 
