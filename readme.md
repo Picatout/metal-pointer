@@ -28,6 +28,12 @@ When a metal object come close to **L1** it modify the inductance then **C6-L1**
 
 ## Revisions 
 
+### Revision 3 
+
+* I had wrongly connected cathode of **D1** to **CN4:4 (Vin)**  instead of **CN4:1 (5V)**.    
+
+![metal-detector-schematic(R3).png](metal-detector-schematic(R3).png)
+
 ### Revision 2 
 
 *  Modified schematic and [metal-detector.bas](metal-detector.bas) to improve sensitivity. 
