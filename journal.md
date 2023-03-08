@@ -1,3 +1,12 @@
+
+### 2023-03-08 
+
+* [metal-detector.bas](metal-detector.bas) Révision 3
+    * Modifié la constante  **SENSIVITY**  de **4** à **2** pour amélliorer la sensibilité. 
+    * Ajout de la constante **DEBUG** et modifié le code pour n'interagir avec le terminal lorsque **DEBUG=1**
+    * Sauvegarder le programme en flash 
+    * Utililsé la commande **AUTORUN DETECTOR** pour exécuter le programme lors de la mise sous tension du détecteur.
+    
 ### 2023-03-07
 
 * Version 1 révision 2
