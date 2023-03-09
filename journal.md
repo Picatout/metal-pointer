@@ -1,3 +1,8 @@
+### 2023-03-09 
+
+* Création de la feuille dans KiCAD pour la **version 2** qui n'utilise pas de cristal externe mais plutôt le signal **TMCO** de 8Mhz en provenance du ST-LINK. 
+
+* Modification de [metal-detector.bas](metal-detector.bas) pour tenir compte de la dernière réversion de [STM8_TBI](https://github.com/picatout/stm8_tbi) qui ajoute les commandes **CLK_HSE** et **CLK_HSI** pour faire la commutation entre l'oscillateur  interne et l'oscillateur externe.
 
 ### 2023-03-08 
 
