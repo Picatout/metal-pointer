@@ -28,6 +28,21 @@ When a metal object come close to **L1** it modify the inductance then **C6-L1**
 
 ## Revisions 
 
+### Version 2 
+
+* Sheet **version 2** in KiCAD schematic. In this version the external 12Mhz crystal is discarded. The **SB5** bride on NUCLEO board is closed which bring 8Mhz **TMCO** signal to STM8 PA1 pin.
+This version of metal detector use new command **CLK_HSE** from last version of [STM8 Tiny BASIC](https://github.com/picatout/stm8_tbi).
+
+![metal-detector-schematic(V2).png](metal-detector-schematic(V2).png)
+
+### Revision 3 
+
+* I had wrongly connected cathode of **D1** to **CN4:4 (Vin)**  instead of **CN4:1 (5V)**.    
+
+![metal-detector-schematic(R3).png](metal-detector-schematic(R3).png)
+
+[short video demo](https://youtube.com/shorts/o5VKi-kE5qI?feature=share) 
+
 ### Revision 2 
 
 *  Modified schematic and [metal-detector.bas](metal-detector.bas) to improve sensitivity. 

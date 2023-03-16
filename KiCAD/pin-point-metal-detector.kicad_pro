@@ -324,6 +324,10 @@
     [
       "89784569-dbbc-4856-b294-e9dcf34e8976",
       "version 2"
+    ],
+    [
+      "5a9f9a11-e3de-4de9-b8bd-c61accb493db",
+      "bare-metal"
     ]
   ],
   "text_variables": {}
