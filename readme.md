@@ -27,6 +27,11 @@ When a metal object come close to **L1** it modify the inductance then **C6-L1**
 **L1** is a commercial inductor wound on a ferrite core. 
 
 ## Revisions 
+### version 3 
+
+Bare metal programming in assembly on STM8S105K6B6. 
+
+![bare-metal/bare-metal-schematic.png](bare-metal/bare-metal-schematic.png)
 
 ### Version 2 
 
