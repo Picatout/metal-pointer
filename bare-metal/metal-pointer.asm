@@ -11,7 +11,7 @@
     .page 
 
 ; defined for debug.asm 
-DEBUG=1 
+DEBUG=1
 FMSTR=12000000 ; 
 
 
@@ -147,7 +147,7 @@ clock_init:
     decw x 
     jrne 1$        
 ; disable all unused peripheral clock
-    ld a,#0xB0 ; enable all timers 1,2,4 
+    ld a,#0xB0 ; enable timers 1,2,4 
     ld CLK_PCKENR1,a 
     ld a,#(1<<3) ; ADC 
     ld CLK_PCKENR2,a 
@@ -207,7 +207,7 @@ timer2_init:
 	bset TIM1_CR1,#TIM_CR1_CEN
 	bset TIM1_EGR,#0
 ; enable ADC 
-;    bset ADC_TDRL,#ADC_INPUT
+    bset ADC_TDRL,#ADC_INPUT
     mov ADC_CR1,#(4<<4) ; ADCclk=Fmaster/8 
     bset ADC_CR2,#ADC_CR2_ALIGN
     bset ADC_CR1,#0 ; turn on ADC  
@@ -306,7 +306,7 @@ adc_read:
 ;------------------------
 charge_cap:
 	bset TIM1_BKR,#7 ; enable PWM output   
-    ldw x,#9
+    ldw x,#4
     call pause 
 	bres TIM1_BKR,#7 ; disable PWM output       
     ret 
@@ -323,7 +323,7 @@ flush_cap:
     ldw x,#1 
     call pause 
     bres PB_DDR,#3 
-    bset ADC_CR1,#ADC_CR1_ADON 
+    bset ADC_CR1,#ADC_CR1_ADON
     ret 
 
 ;------------------------

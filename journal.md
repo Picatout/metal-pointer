@@ -1,3 +1,13 @@
+### 2023-03-17
+
+* Modification au circuit de la version 2. 
+    * Modification de la valeur du condensateur C8. Était de **100nF** remplacé par **10nF**. 
+    * Suppression de la résistance de 5M1 qui était en parrallèle avec **C8**.
+
+### 2023-03-16 
+
+* Premier commit du dossier **bare-metal**. 
+
 ### 2023-03-09 
 
 * Version 3 

@@ -1,6 +1,6 @@
 NEW 
 1 DETECTOR 
-2 ' Pin point metal detector, version 1, revesion 4  
+2 ' Pin point metal detector, version 1, revesion 5 
 4  CLK_HSE  
 6 CONST DEBUG=0 : LET K=0 
 10 PMODE 6,POUT ' GREEN LED OUTPUT
@@ -9,6 +9,7 @@ NEW
 40 CONST PB.CR1=$5008: BRES PB.CR1,8
 50 CONST ADC.TDRL=$5407: BSET ADC.TDRL,8 
 60 CONST LEN=32
+64 PMODE 9,POUT: DWRITE 9,0 
 70 PWM.EN 1,8 
 80 PWM.CH.EN 4,1 
 88 ' set PWM frequency to ~50Khz
@@ -18,7 +19,7 @@ NEW
 110 GOSUB LOW.POWER
 120 PAUSE 100 
 130 FOR I=1 TO LEN : LET S=S+ADCREAD(3):PAUSE 1:NEXT I 
-140 LET A=S/LEN  
+140 LET A=S/LEN  ' average 32 samples 
 150 IF DEBUG : GOSUB CLS : ? "Detector active"
 160 DO 
 164 GOSUB CLR.C3 
@@ -34,8 +35,7 @@ NEW
 250 CLS 
 260 ' clear terminal screen 
 270 ' send cursor top-left 
-280 ? CHAR(27);"[";CHAR(50);CHAR($4A)
-290 ? CHAR(27);"[";CHAR($48)
+280 ? CHAR(27);"c"
 300 RETURN 
 399 ' BEEP and LED on for 10msec 
 400 ALARM 
@@ -49,11 +49,12 @@ NEW
 
 699 ' empty C3
 700 CLR.C3  
-702 ADCON 0 
+702 ADCON 0 : PWM.CH.EN 4,0  
 704 BSET PORTB+DDR,8
 706 BRES PORTB+ODR,8 
 708 PAUSE 1 
 710 BRES PORTB+DDR,8 
-712 ADCON 1,4 
-714 PAUSE 2
+712 PWM.CH.EN 4,1 
+714 ADCON 1,4 
+716 PAUSE 1
 720 RETURN 

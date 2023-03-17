@@ -7686,9 +7686,6 @@
     (path "/89784569-dbbc-4856-b294-e9dcf34e8976/a2638532-53d0-4777-b5e1-e656872670ca"
       (reference "#PWR017") (unit 1) (value "GND") (footprint "")
     )
-    (path "/89784569-dbbc-4856-b294-e9dcf34e8976/e2d86c17-32f5-4343-b1d2-6c88325e57f1"
-      (reference "#PWR018") (unit 1) (value "GND") (footprint "")
-    )
     (path "/89784569-dbbc-4856-b294-e9dcf34e8976/f27fa515-176c-4568-b482-4a1bddb28979"
       (reference "#PWR019") (unit 1) (value "GND") (footprint "")
     )
@@ -7753,7 +7750,7 @@
       (reference "C7") (unit 1) (value "10uF") (footprint "")
     )
     (path "/89784569-dbbc-4856-b294-e9dcf34e8976/5e854ad8-5b23-4ff5-983e-bde1590279a5"
-      (reference "C8") (unit 1) (value "100nF") (footprint "")
+      (reference "C8") (unit 1) (value "10nF") (footprint "")
     )
     (path "/89784569-dbbc-4856-b294-e9dcf34e8976/8db422b6-b4f8-421f-8ca7-98a241721705"
       (reference "C9") (unit 1) (value "10uF") (footprint "")
@@ -7780,7 +7777,7 @@
       (reference "C16") (unit 1) (value "1uF") (footprint "")
     )
     (path "/5a9f9a11-e3de-4de9-b8bd-c61accb493db/05bf19a7-709e-4045-bb07-6caf7aace3bf"
-      (reference "C17") (unit 1) (value "100nF") (footprint "")
+      (reference "C17") (unit 1) (value "10nF") (footprint "")
     )
     (path "/5a9f9a11-e3de-4de9-b8bd-c61accb493db/9e6b0807-6aab-43be-8edb-5bbc5a8f380a"
       (reference "C19") (unit 1) (value "1nF") (footprint "")
@@ -7884,9 +7881,6 @@
     (path "/89784569-dbbc-4856-b294-e9dcf34e8976/533d710b-3b53-4646-94ef-b414b75a8342"
       (reference "R4") (unit 1) (value "76") (footprint "")
     )
-    (path "/89784569-dbbc-4856-b294-e9dcf34e8976/a10efe29-0394-491c-9ee0-a406f911c203"
-      (reference "R5") (unit 1) (value "5M1") (footprint "")
-    )
     (path "/89784569-dbbc-4856-b294-e9dcf34e8976/fe99e1df-7c4c-4fdb-92ca-90192ea529fb"
       (reference "R6") (unit 1) (value "330") (footprint "")
     )
@@ -7895,9 +7889,6 @@
     )
     (path "/5a9f9a11-e3de-4de9-b8bd-c61accb493db/f3d06a4d-fa0d-4083-8e6f-9ca5b7146c9e"
       (reference "R8") (unit 1) (value "300") (footprint "")
-    )
-    (path "/5a9f9a11-e3de-4de9-b8bd-c61accb493db/a1c5608d-4fdc-4691-8a7b-8a60d73c2e03"
-      (reference "R9") (unit 1) (value "5M1") (footprint "")
     )
     (path "/5a9f9a11-e3de-4de9-b8bd-c61accb493db/9fc80dba-e9f8-49aa-8817-7f6e18a9af69"
       (reference "R10") (unit 1) (value "300") (footprint "")
