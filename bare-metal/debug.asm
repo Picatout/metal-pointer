@@ -135,4 +135,14 @@ uart_prt_int:
     pop a 
     ret 
 
+;------------------------
+; clear terminal screen 
+;-------------------------
+clear_screen:
+    ld a,#27 
+    call uart_putc 
+    ld a,#'c 
+    call uart_putc 
+    ret 
+    
 .endif ; DEBUG 

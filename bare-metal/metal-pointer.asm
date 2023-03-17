@@ -58,7 +58,7 @@ TMR1_DC= TMR1_PERIOD/2
         .org RAM_BASE 
 ;**********************************************************
 SAMPLES_SUM: .blkw 1   ; sum of ADC reading  
-SAMPLES_MEAN: .blkw 1  ; mean of 32 reading  
+SAMPLES_AVG: .blkw 1  ; mean of 32 reading  
 CNTDWN: .blkw 1 ; count down timer 
 PERIOD: .blkw 1 ; PWM period count 
 
@@ -216,12 +216,6 @@ init_detector:
 ; initialize detector 
 ; by reading 32 samples
 ; and calculate mean 
-.if DEBUG 
-    ld a,#27
-    call uart_putc
-    ld a,#'c 
-    call uart_putc 
-.endif 
     push #32
     clrw x 
     ldw SAMPLES_SUM,x  
@@ -233,9 +227,10 @@ init_detector:
     jrne 2$
     ldw y,#32
     divw x,y 
-    ldw SAMPLES_MEAN,x 
+    ldw SAMPLES_AVG,x 
 
 .if DEBUG 
+    call clear_screen
     call uart_prt_int
     ld a,#13
     call uart_putc
@@ -246,7 +241,7 @@ init_detector:
 detector:
     call sample 
     pushw x 
-    ldw x,SAMPLES_MEAN 
+    ldw x,SAMPLES_AVG 
     subw x,(1,sp)
     jrpl 3$ 
     negw x  
@@ -257,14 +252,14 @@ call uart_prt_int
 .endif 
     call alarm 
 4$: 
-    ; adjust SAMPLES_MEAN 
+    ; adjust SAMPLES_AVG 
     ldw x,SAMPLES_SUM  
-    subw x,SAMPLES_MEAN 
+    subw x,SAMPLES_AVG 
     addw x,(1,sp)
     ldw SAMPLES_SUM,x 
     ldw y,#32 
     divw x,y 
-    ldw SAMPLES_MEAN,x 
+    ldw SAMPLES_AVG,x 
     popw x 
     jra detector 
 

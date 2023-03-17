@@ -19,7 +19,7 @@ Area                                    Addr        Size        Decimal Bytes (A
      00000008  l_DATA0                         
      00000080  l_HOME                          
      00000100  l_SSEG1                         
-     00000235  l_CODE                          
+     0000023F  l_CODE                          
      00008000  s_HOME                          
      00008080  s_CODE                          
 ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
@@ -54,15 +54,15 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CODE                                00008080    00000235 =         565. bytes (REL,CON)
+CODE                                00008080    0000023F =         575. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00008229  uart_init                          METAL_POINTER
-     0000822D  uart_set_baud                      METAL_POINTER
-     00008257  uart_putc                          METAL_POINTER
-     00008260  uart_getc                          METAL_POINTER
-     00008271  uart_puts                          METAL_POINTER
+     00008228  uart_init                          METAL_POINTER
+     0000822C  uart_set_baud                      METAL_POINTER
+     00008256  uart_putc                          METAL_POINTER
+     0000825F  uart_getc                          METAL_POINTER
+     00008270  uart_puts                          METAL_POINTER
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 6.
 
