@@ -7686,6 +7686,9 @@
     (path "/89784569-dbbc-4856-b294-e9dcf34e8976/a2638532-53d0-4777-b5e1-e656872670ca"
       (reference "#PWR017") (unit 1) (value "GND") (footprint "")
     )
+    (path "/5a9f9a11-e3de-4de9-b8bd-c61accb493db/a1819ea0-f16d-4a14-a7b9-ebe6c0a62dff"
+      (reference "#PWR018") (unit 1) (value "GND") (footprint "")
+    )
     (path "/89784569-dbbc-4856-b294-e9dcf34e8976/f27fa515-176c-4568-b482-4a1bddb28979"
       (reference "#PWR019") (unit 1) (value "GND") (footprint "")
     )
@@ -7869,6 +7872,9 @@
     (path "/5a9f9a11-e3de-4de9-b8bd-c61accb493db/6783a906-34d0-44c8-81e7-873b6a9f0617"
       (reference "LS3") (unit 1) (value "8 ohm") (footprint "")
     )
+    (path "/5a9f9a11-e3de-4de9-b8bd-c61accb493db/0e4aa03d-31af-4300-93d2-812881a8b8fe"
+      (reference "Q1") (unit 1) (value "2N3904") (footprint "Package_TO_SOT_THT:TO-92_Inline")
+    )
     (path "/3f6b9dc4-dd66-4788-b16d-efb17f92cb28"
       (reference "R1") (unit 1) (value "76") (footprint "")
     )
@@ -7888,7 +7894,7 @@
       (reference "R7") (unit 1) (value "10K") (footprint "")
     )
     (path "/5a9f9a11-e3de-4de9-b8bd-c61accb493db/f3d06a4d-fa0d-4083-8e6f-9ca5b7146c9e"
-      (reference "R8") (unit 1) (value "300") (footprint "")
+      (reference "R8") (unit 1) (value "1K") (footprint "")
     )
     (path "/5a9f9a11-e3de-4de9-b8bd-c61accb493db/9fc80dba-e9f8-49aa-8817-7f6e18a9af69"
       (reference "R10") (unit 1) (value "300") (footprint "")

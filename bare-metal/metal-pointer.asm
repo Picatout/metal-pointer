@@ -11,9 +11,16 @@
     .page 
 
 ; defined for debug.asm 
-DEBUG=1
+DEBUG=0
 FMSTR=12000000 ; 
 
+MODE_1=1  
+
+.if MODE_1 
+MODE_2=0 
+.else 
+MODE_2=1
+.endif 
 
 ;------------------------------
 ;  system constants 
@@ -22,6 +29,8 @@ ALARM_LED_BIT = 3
 ALARM_LED_ODR = PC_ODR 
 ALRAM_LED_DDR = PC_DDR 
 ALARM_LED_CR1 = PC_CR1 
+ALARM_FREQ_HIGH=12000; 12Mhz/1000 
+ALARM_FREQ_LOW=17142; 12Mhz/700
 ADC_INPUT = 3
 
 ;; detector sensivity
@@ -32,7 +41,7 @@ SENSIVITY = 2
 ;; period = 12e6/50329 - 1
 TMR1_PERIOD=237 
 ; duty cycle 
-TMR1_DC= TMR1_PERIOD/2 
+TMR1_DC= (TMR1_PERIOD/2)
 
     .macro _led_on 
     bres ALARM_LED_ODR,#ALARM_LED_BIT 
@@ -42,7 +51,7 @@ TMR1_DC= TMR1_PERIOD/2
     bset ALARM_LED_ODR,#ALARM_LED_BIT 
     .endm 
 
-    .macro _sound_on 
+    .macro _sound_on     
  	bset TIM2_CCER1,#TIM_CCER1_CC1E
 	bset TIM2_CR1,#TIM_CR1_CEN
 	bset TIM2_EGR,#TIM_EGR_UG
@@ -57,11 +66,15 @@ TMR1_DC= TMR1_PERIOD/2
         .area DATA (ABS)
         .org RAM_BASE 
 ;**********************************************************
+ALARM_DLY: .blkb 1 ; control alarm duration 
 SAMPLES_SUM: .blkw 1   ; sum of ADC reading  
 SAMPLES_AVG: .blkw 1  ; mean of 32 reading  
 CNTDWN: .blkw 1 ; count down timer 
 PERIOD: .blkw 1 ; PWM period count 
-
+CHANGE: .blkb 1 ; 1=up|-1=down|0=same 
+COUNT: .blkb 1 ; count changes in same direction 
+LAST:  .blkw 1 ; last sample value 
+DELTA: .blkb 1 ; 128*(average-last) 
 
 ;**********************************************************
         .area SSEG (ABS) ; STACK
@@ -118,6 +131,13 @@ NonHandledInterrupt:
 
 ; used for count down timer 
 Timer4Handler:
+    tnz ALARM_DLY
+    jreq 0$ 
+    dec ALARM_DLY
+    jrne 0$
+    _led_off 
+    _sound_off
+0$:     
 	clr TIM4_SR 
     ldw x,CNTDWN 
     jreq 1$
@@ -186,21 +206,21 @@ timer4_init:
 timer2_init:
     bres PD_CR1,#4 ; open drain output 
  	mov TIM2_CCMR1,#(6<<TIMx_CCRM1_OC1M) ; PWM mode 1 
-	mov TIM2_PSCR,#6 ; 12Mhz/64=187500
-    clr TIM2_ARRH 
-    mov TIM2_ARRL,#187
-    clr TIM2_CCR1H
-    mov TIM2_CCR1L,#94
+	mov TIM2_PSCR,#0 ; 
+    mov TIM2_ARRH,#ALARM_FREQ_LOW>>8  
+    mov TIM2_ARRL,#ALARM_FREQ_LOW&255 
+    mov TIM2_CCR1H,#(ALARM_FREQ_LOW/2)>>8
+    mov TIM2_CCR1L,#(ALARM_FREQ_LOW/2)&255 
 ; initialize TIMER1 for PWM generation 
 ; Fpwm= 50329 Hertz 
     ldw x,#TMR1_PERIOD 
     ldw PERIOD,x 
     clr TIM1_PSCRH
     clr TIM1_PSCRL 
-    clr TIM1_ARRH 
-    mov TIM1_ARRL,#TMR1_PERIOD ; 12Mhz/50329=158.9
-    clr TIM1_CCR4H
-    mov TIM1_CCR4L,#TMR1_DC 
+    mov TIM1_ARRH,#TMR1_PERIOD>>8  
+    mov TIM1_ARRL,#TMR1_PERIOD&0xff ; 12Mhz/50329=158.9
+    mov TIM1_CCR4H,#TMR1_DC>>8
+    mov TIM1_CCR4L,#TMR1_DC&0xff 
     bset TIM1_CCER2,#TIM_CCER2_CC4E 
     mov TIM1_CCMR4,#(6<<4)|(1<<3) ;OC4M=6|OC4PE=1 ; PWM mode 1 
 ; enable counter 
@@ -212,6 +232,51 @@ timer2_init:
     bset ADC_CR2,#ADC_CR2_ALIGN
     bset ADC_CR1,#0 ; turn on ADC  
 
+;;;;;;;;;;;;;;;;;
+;  mode 2 
+;;;;;;;;;;;;;;;;;
+.if MODE_2 
+    call power_on 
+    call sample 
+    ldw LAST,x 
+.if DEBUG 
+    call clear_screen 
+    call uart_prt_int 
+    ld a,#13 
+    call uart_putc 
+.endif 
+reset: 
+    clr COUNT 
+    clr CHANGE 
+test: 
+    call sample
+    cpw x,LAST 
+    jreq test    
+    jrpl 2$ 
+    dec CHANGE 
+    jra 3$ 
+2$: inc CHANGE 
+3$: ldw LAST, x
+    inc COUNT 
+    ld a,COUNT
+    cp a,#4 
+    jrmi test  
+    ld a, CHANGE 
+    jrpl 4$ 
+    neg a 
+4$: 
+    cp a,#SENSIVITY 
+    jrmi test  
+.if DEBUG 
+call uart_prt_int
+.endif 
+    call alarm 
+    jra reset 
+.endif 
+
+;;;;;;;;;;;
+; mode 1 
+;;;;;;;;;;;
 init_detector: 
 ; initialize detector 
 ; by reading 32 samples
@@ -239,12 +304,14 @@ init_detector:
 
 ; begin detection 
 detector:
+    mov DELTA,#255
     call sample 
     pushw x 
     ldw x,SAMPLES_AVG 
     subw x,(1,sp)
-    jrpl 3$ 
+    jrpl 3$
     negw x  
+    clr DELTA 
 3$: cpw x,#SENSIVITY 
     jrmi 4$ 
 .if DEBUG 
@@ -267,12 +334,17 @@ call uart_prt_int
 ; detection alarm 
 ;----------------------
 alarm:
-    _sound_on 
     _led_on 
+    call set_tone_freq 
+    _sound_on 
+.if MODE_2
+    mov ALARM_DLY, #10 
+.else 
     ldw x,#10 
     call pause 
     _led_off 
     _sound_off 
+.endif 
     ret 
 
 ;--------------------
@@ -338,7 +410,7 @@ pause:
     jrne 1$ 
     ret 
 
-.if 0
+.if MODE_2 
 ;--------------------------
 ; power on signal 
 ; LED and sound on for 
@@ -353,3 +425,27 @@ power_on:
     _sound_off
     ret 
 .endif 
+
+;---------------------
+; set tone frequence
+; paramters 
+;  ALARM_FREQ constant 
+;  DELTA variable  
+;--------------------
+set_tone_freq:
+    ldw x,#ALARM_FREQ_HIGH 
+    tnz DELTA 
+    jrpl 1$ 
+    LDW x,#ALARM_FREQ_LOW 
+1$:
+    ld a,xh 
+    ld TIM2_ARRH,a 
+    ld a,xl 
+    ld TIM2_ARRL,a 
+    srlw x 
+    ld a,xh 
+    ld TIM2_CCR1H,a 
+    ld a,xl 
+    ld TIM2_CCR1L,a 
+    bset TIM2_EGR,#TIM_EGR_UG 
+    ret 

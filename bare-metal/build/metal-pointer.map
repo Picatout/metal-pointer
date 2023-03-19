@@ -16,10 +16,10 @@ Area                                    Addr        Size        Decimal Bytes (A
      00000000  s_SSEG1                         
      00000000  s__CODE                         
      00000001  s_DATA                          
-     00000008  l_DATA0                         
+     0000000E  l_DATA0                         
      00000080  l_HOME                          
      00000100  l_SSEG1                         
-     0000023D  l_CODE                          
+     000001DA  l_CODE                          
      00008000  s_HOME                          
      00008080  s_CODE                          
 ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
@@ -27,7 +27,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-DATA0                               00000000    00000008 =           8. bytes (ABS,CON)
+DATA0                               00000000    0000000E =          14. bytes (ABS,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -54,16 +54,10 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CODE                                00008080    0000023D =         573. bytes (REL,CON)
+CODE                                00008080    000001DA =         474. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00008226  uart_init                          METAL_POINTER
-     0000822A  uart_set_baud                      METAL_POINTER
-     00008254  uart_putc                          METAL_POINTER
-     0000825D  uart_getc                          METAL_POINTER
-     0000826E  uart_puts                          METAL_POINTER
-
 ASxxxx Linker V03.00 + NoICE + sdld,  page 6.
 
 Files Linked                              [ module(s) ]
