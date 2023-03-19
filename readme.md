@@ -3,7 +3,9 @@
 This is a pin point metal detector using a NUCLEO-8S207K8 module with [stm8_tbi](https://github.com/picatout/stm8_tbi).
 
 The Tiny BASIC application  [metal-detector.bas](metal-detector.bas)
- 
+
+* [revision notes](#revisions) 
+
 ## Schematic, version 2
 
 ![metal-detector-schematic.png](metal-detector-schematic.png)
@@ -26,8 +28,18 @@ When a metal object come close to **L1** it modify the inductance then **C6-L1**
 
 **L1** is a commercial inductor wound on a ferrite core. 
 
+<a id="revisions"></a>
 ## Revisions 
-### version 3 
+
+### version 3 (STM8S105KBB6) R2
+
+* Added double tonalities to alarm to distinguish between *going closer* and *going further*. For steel going closer generate higher pitch and going further generate lower pitch. For nickel it is the opposite.
+
+* Added a buffer transistor to speaker as the sounding alarm was dropping *Vdda* affecting sample reading.
+
+![bare-metal-schematic(r2).png](bare-metal/bare-metal-schematic(r2).png)
+
+### version 3  (STM8S105KBB6) R1
 
 Bare metal programming in assembly on STM8S105K6B6. 
 

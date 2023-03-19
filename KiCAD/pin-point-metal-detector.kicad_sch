@@ -7894,7 +7894,7 @@
       (reference "R7") (unit 1) (value "10K") (footprint "")
     )
     (path "/5a9f9a11-e3de-4de9-b8bd-c61accb493db/f3d06a4d-fa0d-4083-8e6f-9ca5b7146c9e"
-      (reference "R8") (unit 1) (value "1K") (footprint "")
+      (reference "R8") (unit 1) (value "520") (footprint "")
     )
     (path "/5a9f9a11-e3de-4de9-b8bd-c61accb493db/9fc80dba-e9f8-49aa-8817-7f6e18a9af69"
       (reference "R10") (unit 1) (value "300") (footprint "")

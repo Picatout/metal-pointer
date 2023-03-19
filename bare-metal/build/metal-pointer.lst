@@ -1510,246 +1510,247 @@ Hexadecimal [24-Bits]
                                     236 ;  mode 2 
                                     237 ;;;;;;;;;;;;;;;;;
                            000000   238 .if MODE_2 
-                                    239     call power_on 
-                                    240     call sample 
-                                    241     ldw LAST,x 
-                                    242 .if DEBUG 
-                                    243     call clear_screen 
-                                    244     call uart_prt_int 
-                                    245     ld a,#13 
-                                    246     call uart_putc 
-                                    247 .endif 
-                                    248 reset: 
-                                    249     clr COUNT 
-                                    250     clr CHANGE 
-                                    251 test: 
-                                    252     call sample
-                                    253     cpw x,LAST 
-                                    254     jreq test    
-                                    255     jrpl 2$ 
-                                    256     dec CHANGE 
-                                    257     jra 3$ 
-                                    258 2$: inc CHANGE 
-                                    259 3$: ldw LAST, x
-                                    260     inc COUNT 
-                                    261     ld a,COUNT
-                                    262     cp a,#4 
-                                    263     jrmi test  
-                                    264     ld a, CHANGE 
-                                    265     jrpl 4$ 
-                                    266     neg a 
-                                    267 4$: 
-                                    268     cp a,#SENSIVITY 
-                                    269     jrmi test  
-                                    270 .if DEBUG 
-                                    271 call uart_prt_int
-                                    272 .endif 
-                                    273     call alarm 
-                                    274     jra reset 
-                                    275 .endif 
-                                    276 
-                                    277 ;;;;;;;;;;;
-                                    278 ; mode 1 
-                                    279 ;;;;;;;;;;;
-      0000EC                        280 init_detector: 
-                                    281 ; initialize detector 
-                                    282 ; by reading 32 samples
+                                    239 mode.2: 
+                                    240     call power_on 
+                                    241     call sample 
+                                    242     ldw LAST,x 
+                                    243 .if DEBUG 
+                                    244     call clear_screen 
+                                    245     call uart_prt_int 
+                                    246     ld a,#13 
+                                    247     call uart_putc 
+                                    248 .endif 
+                                    249 reset: 
+                                    250     clr COUNT 
+                                    251     clr CHANGE 
+                                    252 test: 
+                                    253     call sample
+                                    254     cpw x,LAST 
+                                    255     jreq test    
+                                    256     jrpl 2$ 
+                                    257     dec CHANGE 
+                                    258     jra 3$ 
+                                    259 2$: inc CHANGE 
+                                    260 3$: ldw LAST, x
+                                    261     inc COUNT 
+                                    262     ld a,COUNT
+                                    263     cp a,#4 
+                                    264     jrmi test  
+                                    265     ld a, CHANGE 
+                                    266     jrpl 4$ 
+                                    267     neg a 
+                                    268 4$: 
+                                    269     cp a,#SENSIVITY 
+                                    270     jrmi test  
+                                    271 .if DEBUG 
+                                    272 call uart_prt_int
+                                    273 .endif 
+                                    274     call alarm 
+                                    275     jra reset 
+                                    276 .endif 
+                                    277 
+                                    278 ;;;;;;;;;;;
+                                    279 ; mode 1 
+                                    280 ;;;;;;;;;;;
+      0000EC                        281 init_detector: 
+                                    282 ; initialize detector 
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (STMicroelectronics STM8), page 30.
 Hexadecimal [24-Bits]
 
 
 
-                                    283 ; and calculate mean 
-      0000EC 4B 20            [ 1]  284     push #32
-      0000EE 5F               [ 1]  285     clrw x 
-      0000EF CF 00 01         [ 2]  286     ldw SAMPLES_SUM,x  
-      0000F2                        287 2$: 
-      0000F2 CD 01 64         [ 4]  288     call sample 
-      0000F5 72 BB 00 01      [ 2]  289     addw x, SAMPLES_SUM
-      0000F9 CF 00 01         [ 2]  290     ldw SAMPLES_SUM, x
-      0000FC 0A 01            [ 1]  291     dec (1,sp)
-      0000FE 26 F2            [ 1]  292     jrne 2$
-      000100 90 AE 00 20      [ 2]  293     ldw y,#32
-      000104 65               [ 2]  294     divw x,y 
-      000105 CF 00 03         [ 2]  295     ldw SAMPLES_AVG,x 
-                                    296 
-                           000000   297 .if DEBUG 
-                                    298     call clear_screen
-                                    299     call uart_prt_int
-                                    300     ld a,#13
-                                    301     call uart_putc
-                                    302 .endif 
-      000108 84               [ 1]  303     pop a 
-                                    304 
-                                    305 ; begin detection 
-      000109                        306 detector:
-      000109 35 FF 00 0D      [ 1]  307     mov DELTA,#255
-      00010D CD 01 64         [ 4]  308     call sample 
-      000110 89               [ 2]  309     pushw x 
-      000111 CE 00 03         [ 2]  310     ldw x,SAMPLES_AVG 
-      000114 72 F0 01         [ 2]  311     subw x,(1,sp)
-      000117 2A 05            [ 1]  312     jrpl 3$
-      000119 50               [ 2]  313     negw x  
-      00011A 72 5F 00 0D      [ 1]  314     clr DELTA 
-      00011E A3 00 02         [ 2]  315 3$: cpw x,#SENSIVITY 
-      000121 2B 03            [ 1]  316     jrmi 4$ 
-                           000000   317 .if DEBUG 
-                                    318 call uart_prt_int
-                                    319 .endif 
-      000123 CD 01 3E         [ 4]  320     call alarm 
-      000126                        321 4$: 
-                                    322     ; adjust SAMPLES_AVG 
-      000126 CE 00 01         [ 2]  323     ldw x,SAMPLES_SUM  
-      000129 72 B0 00 03      [ 2]  324     subw x,SAMPLES_AVG 
-      00012D 72 FB 01         [ 2]  325     addw x,(1,sp)
-      000130 CF 00 01         [ 2]  326     ldw SAMPLES_SUM,x 
-      000133 90 AE 00 20      [ 2]  327     ldw y,#32 
-      000137 65               [ 2]  328     divw x,y 
-      000138 CF 00 03         [ 2]  329     ldw SAMPLES_AVG,x 
-      00013B 85               [ 2]  330     popw x 
-      00013C 20 CB            [ 2]  331     jra detector 
-                                    332 
-                                    333 ;----------------------
-                                    334 ; detection alarm 
-                                    335 ;----------------------
-      00013E                        336 alarm:
-      00013E                        337     _led_on 
+                                    283 ; by reading 32 samples
+                                    284 ; and calculate mean 
+      0000EC 4B 20            [ 1]  285     push #32
+      0000EE 5F               [ 1]  286     clrw x 
+      0000EF CF 00 01         [ 2]  287     ldw SAMPLES_SUM,x  
+      0000F2                        288 2$: 
+      0000F2 CD 01 64         [ 4]  289     call sample 
+      0000F5 72 BB 00 01      [ 2]  290     addw x, SAMPLES_SUM
+      0000F9 CF 00 01         [ 2]  291     ldw SAMPLES_SUM, x
+      0000FC 0A 01            [ 1]  292     dec (1,sp)
+      0000FE 26 F2            [ 1]  293     jrne 2$
+      000100 90 AE 00 20      [ 2]  294     ldw y,#32
+      000104 65               [ 2]  295     divw x,y 
+      000105 CF 00 03         [ 2]  296     ldw SAMPLES_AVG,x 
+                                    297 
+                           000000   298 .if DEBUG 
+                                    299     call clear_screen
+                                    300     call uart_prt_int
+                                    301     ld a,#13
+                                    302     call uart_putc
+                                    303 .endif 
+      000108 84               [ 1]  304     pop a 
+                                    305 
+                                    306 ; begin detection 
+      000109                        307 detector:
+      000109 35 FF 00 0D      [ 1]  308     mov DELTA,#255
+      00010D CD 01 64         [ 4]  309     call sample 
+      000110 89               [ 2]  310     pushw x 
+      000111 CE 00 03         [ 2]  311     ldw x,SAMPLES_AVG 
+      000114 72 F0 01         [ 2]  312     subw x,(1,sp)
+      000117 2A 05            [ 1]  313     jrpl 3$
+      000119 50               [ 2]  314     negw x  
+      00011A 72 5F 00 0D      [ 1]  315     clr DELTA 
+      00011E A3 00 02         [ 2]  316 3$: cpw x,#SENSIVITY 
+      000121 2B 03            [ 1]  317     jrmi 4$ 
+                           000000   318 .if DEBUG 
+                                    319 call uart_prt_int
+                                    320 .endif 
+      000123 CD 01 3E         [ 4]  321     call alarm 
+      000126                        322 4$: 
+                                    323     ; adjust SAMPLES_AVG 
+      000126 CE 00 01         [ 2]  324     ldw x,SAMPLES_SUM  
+      000129 72 B0 00 03      [ 2]  325     subw x,SAMPLES_AVG 
+      00012D 72 FB 01         [ 2]  326     addw x,(1,sp)
+      000130 CF 00 01         [ 2]  327     ldw SAMPLES_SUM,x 
+      000133 90 AE 00 20      [ 2]  328     ldw y,#32 
+      000137 65               [ 2]  329     divw x,y 
+      000138 CF 00 03         [ 2]  330     ldw SAMPLES_AVG,x 
+      00013B 85               [ 2]  331     popw x 
+      00013C 20 CB            [ 2]  332     jra detector 
+                                    333 
+                                    334 ;----------------------
+                                    335 ; detection alarm 
+                                    336 ;----------------------
+      00013E                        337 alarm:
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (STMicroelectronics STM8), page 31.
 Hexadecimal [24-Bits]
 
 
 
+      00013E                        338     _led_on 
       00013E 72 17 50 0A      [ 1]    1     bres ALARM_LED_ODR,#ALARM_LED_BIT 
-      000142 CD 01 B8         [ 4]  338     call set_tone_freq 
-      000145                        339     _sound_on 
+      000142 CD 01 B8         [ 4]  339     call set_tone_freq 
+      000145                        340     _sound_on 
       000145 72 10 53 08      [ 1]    1  	bset TIM2_CCER1,#TIM_CCER1_CC1E
       000149 72 10 53 00      [ 1]    2 	bset TIM2_CR1,#TIM_CR1_CEN
       00014D 72 10 53 04      [ 1]    3 	bset TIM2_EGR,#TIM_EGR_UG
-                           000000   340 .if MODE_2
-                                    341     mov ALARM_DLY, #10 
-                           000001   342 .else 
-      000151 AE 00 0A         [ 2]  343     ldw x,#10 
-      000154 CD 01 AE         [ 4]  344     call pause 
-      000157                        345     _led_off 
+                           000000   341 .if MODE_2
+                                    342     mov ALARM_DLY, #10 
+                           000001   343 .else 
+      000151 AE 00 0A         [ 2]  344     ldw x,#10 
+      000154 CD 01 AE         [ 4]  345     call pause 
+      000157                        346     _led_off 
       000157 72 16 50 0A      [ 1]    1     bset ALARM_LED_ODR,#ALARM_LED_BIT 
-      00015B                        346     _sound_off 
+      00015B                        347     _sound_off 
       00015B 72 11 53 08      [ 1]    1 	bres TIM2_CCER1,#TIM_CCER1_CC1E
       00015F 72 11 53 00      [ 1]    2 	bres TIM2_CR1,#TIM_CR1_CEN 
-                                    347 .endif 
-      000163 81               [ 4]  348     ret 
-                                    349 
-                                    350 ;--------------------
-                                    351 ;  sample detector 
-                                    352 ;--------------------
-      000164                        353 sample:
-      000164 CD 01 93         [ 4]  354     call flush_cap 
-      000167 CD 01 84         [ 4]  355     call charge_cap 
-      00016A CD 01 6E         [ 4]  356     call adc_read  
-      00016D 81               [ 4]  357     ret 
-                                    358 
+                                    348 .endif 
+      000163 81               [ 4]  349     ret 
+                                    350 
+                                    351 ;--------------------
+                                    352 ;  sample detector 
+                                    353 ;--------------------
+      000164                        354 sample:
+      000164 CD 01 93         [ 4]  355     call flush_cap 
+      000167 CD 01 84         [ 4]  356     call charge_cap 
+      00016A CD 01 6E         [ 4]  357     call adc_read  
+      00016D 81               [ 4]  358     ret 
                                     359 
-                                    360 ;------------------------
-                                    361 ; read ADC sample
-                                    362 ; output:
-                                    363 ;    X   sample 
-                                    364 ;-------------------------
-      00016E                        365 adc_read:
-      00016E 35 03 54 00      [ 1]  366     mov ADC_CSR,#ADC_INPUT 
-      000172 72 10 54 01      [ 1]  367     bset ADC_CR1,#0
-      000176 72 0F 54 00 FB   [ 2]  368     btjf ADC_CSR,#ADC_CSR_EOC,. 
-      00017B C6 54 05         [ 1]  369     ld a,ADC_DRL 
-      00017E 97               [ 1]  370     ld xl,a 
-      00017F C6 54 04         [ 1]  371     ld a,ADC_DRH 
-      000182 95               [ 1]  372     ld xh,a 
-      000183 81               [ 4]  373     ret 
-                                    374 
-                                    375 ;------------------------
-                                    376 ; charge peak detector 
-                                    377 ; capacitor 
-                                    378 ;------------------------
-      000184                        379 charge_cap:
-      000184 72 1E 52 6D      [ 1]  380 	bset TIM1_BKR,#7 ; enable PWM output   
-      000188 AE 00 04         [ 2]  381     ldw x,#4
-      00018B CD 01 AE         [ 4]  382     call pause 
-      00018E 72 1F 52 6D      [ 1]  383 	bres TIM1_BKR,#7 ; disable PWM output       
-      000192 81               [ 4]  384     ret 
-                                    385 
+                                    360 
+                                    361 ;------------------------
+                                    362 ; read ADC sample
+                                    363 ; output:
+                                    364 ;    X   sample 
+                                    365 ;-------------------------
+      00016E                        366 adc_read:
+      00016E 35 03 54 00      [ 1]  367     mov ADC_CSR,#ADC_INPUT 
+      000172 72 10 54 01      [ 1]  368     bset ADC_CR1,#0
+      000176 72 0F 54 00 FB   [ 2]  369     btjf ADC_CSR,#ADC_CSR_EOC,. 
+      00017B C6 54 05         [ 1]  370     ld a,ADC_DRL 
+      00017E 97               [ 1]  371     ld xl,a 
+      00017F C6 54 04         [ 1]  372     ld a,ADC_DRH 
+      000182 95               [ 1]  373     ld xh,a 
+      000183 81               [ 4]  374     ret 
+                                    375 
+                                    376 ;------------------------
+                                    377 ; charge peak detector 
+                                    378 ; capacitor 
+                                    379 ;------------------------
+      000184                        380 charge_cap:
+      000184 72 1E 52 6D      [ 1]  381 	bset TIM1_BKR,#7 ; enable PWM output   
+      000188 AE 00 04         [ 2]  382     ldw x,#4
+      00018B CD 01 AE         [ 4]  383     call pause 
+      00018E 72 1F 52 6D      [ 1]  384 	bres TIM1_BKR,#7 ; disable PWM output       
+      000192 81               [ 4]  385     ret 
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (STMicroelectronics STM8), page 32.
 Hexadecimal [24-Bits]
 
 
 
-                                    386 ;------------------------
-                                    387 ;  flush peak detector 
-                                    388 ;  capacitor C19  
-                                    389 ;  pin PB3 
-                                    390 ;------------------------
-      000193                        391 flush_cap: 
-      000193 72 11 54 01      [ 1]  392     bres ADC_CR1,#ADC_CR1_ADON
-      000197 72 16 50 07      [ 1]  393     bset PB_DDR,#3 
-      00019B 72 17 50 05      [ 1]  394     bres PB_ODR,#3 
-      00019F AE 00 01         [ 2]  395     ldw x,#1 
-      0001A2 CD 01 AE         [ 4]  396     call pause 
-      0001A5 72 17 50 07      [ 1]  397     bres PB_DDR,#3 
-      0001A9 72 10 54 01      [ 1]  398     bset ADC_CR1,#ADC_CR1_ADON
-      0001AD 81               [ 4]  399     ret 
-                                    400 
-                                    401 ;------------------------
-                                    402 ; pause msec 
-                                    403 ; input:
-                                    404 ;   x    msec 
-                                    405 ;------------------------
-      0001AE                        406 pause:
-      0001AE CF 00 05         [ 2]  407     ldw CNTDWN,x 
-      0001B1 8F               [10]  408 1$: wfi 
-      0001B2 CE 00 05         [ 2]  409     ldw x,CNTDWN 
-      0001B5 26 FA            [ 1]  410     jrne 1$ 
-      0001B7 81               [ 4]  411     ret 
-                                    412 
-                           000000   413 .if MODE_2 
-                                    414 ;--------------------------
-                                    415 ; power on signal 
-                                    416 ; LED and sound on for 
-                                    417 ; 200 milliseconds
-                                    418 ;--------------------------
-                                    419 power_on:
-                                    420     _sound_on 
-                                    421     _led_on 
-                                    422     ldw x,#200
-                                    423     call pause 
-                                    424     _led_off 
-                                    425     _sound_off
-                                    426     ret 
-                                    427 .endif 
-                                    428 
-                                    429 ;---------------------
-                                    430 ; set tone frequence
-                                    431 ; paramters 
-                                    432 ;  ALARM_FREQ constant 
-                                    433 ;  DELTA variable  
-                                    434 ;--------------------
-      0001B8                        435 set_tone_freq:
-      0001B8 AE 2E E0         [ 2]  436     ldw x,#ALARM_FREQ_HIGH 
-      0001BB 72 5D 00 0D      [ 1]  437     tnz DELTA 
-      0001BF 2A 03            [ 1]  438     jrpl 1$ 
-      0001C1 AE 42 F6         [ 2]  439     LDW x,#ALARM_FREQ_LOW 
-      0001C4                        440 1$:
+                                    386 
+                                    387 ;------------------------
+                                    388 ;  flush peak detector 
+                                    389 ;  capacitor C19  
+                                    390 ;  pin PB3 
+                                    391 ;------------------------
+      000193                        392 flush_cap: 
+      000193 72 11 54 01      [ 1]  393     bres ADC_CR1,#ADC_CR1_ADON
+      000197 72 16 50 07      [ 1]  394     bset PB_DDR,#3 
+      00019B 72 17 50 05      [ 1]  395     bres PB_ODR,#3 
+      00019F AE 00 01         [ 2]  396     ldw x,#1 
+      0001A2 CD 01 AE         [ 4]  397     call pause 
+      0001A5 72 17 50 07      [ 1]  398     bres PB_DDR,#3 
+      0001A9 72 10 54 01      [ 1]  399     bset ADC_CR1,#ADC_CR1_ADON
+      0001AD 81               [ 4]  400     ret 
+                                    401 
+                                    402 ;------------------------
+                                    403 ; pause msec 
+                                    404 ; input:
+                                    405 ;   x    msec 
+                                    406 ;------------------------
+      0001AE                        407 pause:
+      0001AE CF 00 05         [ 2]  408     ldw CNTDWN,x 
+      0001B1 8F               [10]  409 1$: wfi 
+      0001B2 CE 00 05         [ 2]  410     ldw x,CNTDWN 
+      0001B5 26 FA            [ 1]  411     jrne 1$ 
+      0001B7 81               [ 4]  412     ret 
+                                    413 
+                           000000   414 .if MODE_2 
+                                    415 ;--------------------------
+                                    416 ; power on signal 
+                                    417 ; LED and sound on for 
+                                    418 ; 200 milliseconds
+                                    419 ;--------------------------
+                                    420 power_on:
+                                    421     _sound_on 
+                                    422     _led_on 
+                                    423     ldw x,#200
+                                    424     call pause 
+                                    425     _led_off 
+                                    426     _sound_off
+                                    427     ret 
+                                    428 .endif 
+                                    429 
+                                    430 ;---------------------
+                                    431 ; set tone frequence
+                                    432 ; paramters 
+                                    433 ;  ALARM_FREQ constant 
+                                    434 ;  DELTA variable  
+                                    435 ;--------------------
+      0001B8                        436 set_tone_freq:
+      0001B8 AE 2E E0         [ 2]  437     ldw x,#ALARM_FREQ_HIGH 
+      0001BB 72 5D 00 0D      [ 1]  438     tnz DELTA 
+      0001BF 2A 03            [ 1]  439     jrpl 1$ 
+      0001C1 AE 42 F6         [ 2]  440     LDW x,#ALARM_FREQ_LOW 
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (STMicroelectronics STM8), page 33.
 Hexadecimal [24-Bits]
 
 
 
-      0001C4 9E               [ 1]  441     ld a,xh 
-      0001C5 C7 53 0D         [ 1]  442     ld TIM2_ARRH,a 
-      0001C8 9F               [ 1]  443     ld a,xl 
-      0001C9 C7 53 0E         [ 1]  444     ld TIM2_ARRL,a 
-      0001CC 54               [ 2]  445     srlw x 
-      0001CD 9E               [ 1]  446     ld a,xh 
-      0001CE C7 53 0F         [ 1]  447     ld TIM2_CCR1H,a 
-      0001D1 9F               [ 1]  448     ld a,xl 
-      0001D2 C7 53 10         [ 1]  449     ld TIM2_CCR1L,a 
-      0001D5 72 10 53 04      [ 1]  450     bset TIM2_EGR,#TIM_EGR_UG 
-      0001D9 81               [ 4]  451     ret 
+      0001C4                        441 1$:
+      0001C4 9E               [ 1]  442     ld a,xh 
+      0001C5 C7 53 0D         [ 1]  443     ld TIM2_ARRH,a 
+      0001C8 9F               [ 1]  444     ld a,xl 
+      0001C9 C7 53 0E         [ 1]  445     ld TIM2_ARRL,a 
+      0001CC 54               [ 2]  446     srlw x 
+      0001CD 9E               [ 1]  447     ld a,xh 
+      0001CE C7 53 0F         [ 1]  448     ld TIM2_CCR1H,a 
+      0001D1 9F               [ 1]  449     ld a,xl 
+      0001D2 C7 53 10         [ 1]  450     ld TIM2_CCR1L,a 
+      0001D5 72 10 53 04      [ 1]  451     bset TIM2_EGR,#TIM_EGR_UG 
+      0001D9 81               [ 4]  452     ret 
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (STMicroelectronics STM8), page 34.
 Hexadecimal [24-Bits]
 

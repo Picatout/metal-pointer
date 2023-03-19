@@ -1,5 +1,7 @@
 ### 2023-03-19
 
+* Réorganisation du [readme.md] principal.
+
 * Ajout d'une double tonalité d'alarme pour différencier l'approche de l'éloignement. 
 
 * Ajout du mode de détection **MODE_2** pour fin de test.
