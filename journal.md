@@ -1,3 +1,9 @@
+### 2023-03-19
+
+* Ajout d'une double tonalité d'alarme pour différencier l'approche de l'éloignement. 
+
+* Ajout du mode de détection **MODE_2** pour fin de test.
+
 ### 2023-03-17
 
 * Modification au circuit de la version 2. 

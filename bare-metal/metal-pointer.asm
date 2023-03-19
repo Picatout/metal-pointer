@@ -236,6 +236,7 @@ timer2_init:
 ;  mode 2 
 ;;;;;;;;;;;;;;;;;
 .if MODE_2 
+mode.2: 
     call power_on 
     call sample 
     ldw LAST,x 
