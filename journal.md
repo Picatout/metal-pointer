@@ -1,5 +1,7 @@
 ### 2023-03-19
 
+* Création de schématique de la version 4 utilisant un MCU **STM8S103F3M**. 
+
 * Réorganisation du [readme.md] principal.
 
 * Ajout d'une double tonalité d'alarme pour différencier l'approche de l'éloignement. 
