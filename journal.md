@@ -1,3 +1,7 @@
+### 2023-03-22
+
+* Autre test avec différentes confuguration. Finalement je suis passé à un circuit résonnant parrallèle.  ![version-4-stm8s103m6.r4.png](bare-metal/version-4-stm8s103m6.r4.png)
+
 ### 2023-03-21
 
 * Testé différent type d'inductance. Le meilleur résultat est obtenu avec une inductance bobiné sur une ferrite de 7mm de diamètre. 
