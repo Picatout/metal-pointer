@@ -1,3 +1,11 @@
+### 2023-03-21
+
+* Testé différent type d'inductance. Le meilleur résultat est obtenu avec une inductance bobiné sur une ferrite de 7mm de diamètre. 
+
+* Modification de la schématique. 
+
+* Écrire et tester le programme [bare-metal/s103f3-metal-pointer.asm](bare-metal/s103f3-metal-pointer.asm)
+
 ### 2023-03-19
 
 * Création de schématique de la version 4 utilisant un MCU **STM8S103F3M**. 

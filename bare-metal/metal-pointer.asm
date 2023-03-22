@@ -22,6 +22,15 @@ MODE_2=0
 MODE_2=1
 .endif 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; peripherals usage 
+;  TIMER4 1 msec timer, use interrupt 
+;  TIMER1 CH4  PWM, PC4 pin 26
+;  TIMER2 CH1  alarm sound, PD4 pin 2
+;  alarm LED,  PC3 pin 25
+;  ADC read AIN3, PB3 pin 18 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;------------------------------
 ;  system constants 
 ;------------------------------
@@ -37,10 +46,11 @@ ADC_INPUT = 3
 ;; increment to reduce false detection 
 SENSIVITY = 2
 
+FREQ_LC=50329 
 ;; period value for TIMER1 frequency 
-;; period = 12e6/50329 - 1
-TMR1_PERIOD=237 
-; duty cycle 
+;; period = 12e6/FREQ_LC - 1
+TMR1_PERIOD=12000000/FREQ_LC-1 
+; duty cycle 50%
 TMR1_DC= (TMR1_PERIOD/2)
 
     .macro _led_on 
@@ -131,6 +141,8 @@ NonHandledInterrupt:
 
 ; used for count down timer 
 Timer4Handler:
+	clr TIM4_SR 
+.if MODE_2 
     tnz ALARM_DLY
     jreq 0$ 
     dec ALARM_DLY
@@ -138,7 +150,7 @@ Timer4Handler:
     _led_off 
     _sound_off
 0$:     
-	clr TIM4_SR 
+.endif 
     ldw x,CNTDWN 
     jreq 1$
     decw x 
@@ -212,7 +224,7 @@ timer2_init:
     mov TIM2_CCR1H,#(ALARM_FREQ_LOW/2)>>8
     mov TIM2_CCR1L,#(ALARM_FREQ_LOW/2)&255 
 ; initialize TIMER1 for PWM generation 
-; Fpwm= 50329 Hertz 
+; Fpwm= FREQ_LC 
     ldw x,#TMR1_PERIOD 
     ldw PERIOD,x 
     clr TIM1_PSCRH
