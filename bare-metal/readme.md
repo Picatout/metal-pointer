@@ -4,7 +4,7 @@
     * improved sensivity 
     * very few false alarms. 
 
-[new software](nail-finder.v6.asm) and new ciruit. 
+[new software](nail-finder.v6.asm) and new circuit. 
 
 ![new circuit](nail-finder.v6.png) 
 
