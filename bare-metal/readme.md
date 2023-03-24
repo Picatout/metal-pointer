@@ -1,3 +1,17 @@
+# version 6 
+
+* best result up to date. 
+    * improved sensivity 
+    * very few false alarms. 
+
+[new software](nail-finder.v6.asm) and new ciruit. 
+
+![new circuit](nail-finder.v6.png) 
+
+The inductor **L7** is 26 AWG enamel wire wounded on a ferrite rod recuperated from old radio. 
+The rod is 7mm diameter. The winding is 2 layers 3 cm in length. The measure inductance is 821uH.
+
+
 # version 4 
 
 ### 2023-03-22 

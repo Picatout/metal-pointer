@@ -1,3 +1,15 @@
+### 2023-03-23
+
+6ième version du projet. Meilleur résultat à date. 
+    * plus sensible. 
+    * Faux déclechements très rares.
+
+ Nouveau programme [bare-metal/nail-finder.v6.asm](bare-metal/nail-finder.v6.asm) et nouveau circuit avec mode de fonctionnement différent. 
+
+ ![bare-metal/nail-finder.v6.png](bare-metal/nail-finder.v6.png)
+
+ L'inductance utilisée est bobinée avec du fil émaillé 26 AWG en spire jointives sur une barre de ferrite de 7mm de diamètre récupérée d'un vieille radio. Le bobinage débute à 7 mm de l'extérmenté et s'étant sur 3 cm, avec 2 couches de fil. La valeur d'inductance mesurée est de 821uH.    
+
 ### 2023-03-22
 
 * Autre test avec différentes confuguration. Finalement je suis passé à un circuit résonnant parrallèle.  ![version-4-stm8s103m6.r4.png](bare-metal/version-4-stm8s103m6.r4.png)

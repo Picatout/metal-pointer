@@ -1,6 +1,6 @@
-# Pin point metal detector 
+# Nail metal detector 
 
-This is a pin point metal detector using a NUCLEO-8S207K8 module with [stm8_tbi](https://github.com/picatout/stm8_tbi).
+This is a mail metal detector using a NUCLEO-8S207K8 module with [stm8_tbi](https://github.com/picatout/stm8_tbi).
 
 The Tiny BASIC application  [metal-detector.bas](metal-detector.bas)
 
@@ -30,6 +30,10 @@ When a metal object come close to **L1** it modify the inductance then **C6-L1**
 
 <a id="revisions"></a>
 ## Revisions 
+
+### version 6 (STM8S103F3M) assembly coded. 
+
+Best result up to now. see [bare-metal/readme.md](bare-metal/readme.md) for detail.
 
 ### version 3 (STM8S105KBB6) R2
 
