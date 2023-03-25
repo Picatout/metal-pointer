@@ -1,5 +1,9 @@
 ### 2023-03-25 
 
+* Création d'un nouveau projet KiCAD pour le circuit choisi comme version finale du projet. [kiCAD/nail-finder/nail-finder.kicad_pro](kiCAD/nail-finder/nail-finder.kicad_pro).
+
+![bare-metal/nail-finder.v7.png](bare-metal/nail-finder.v7.png)
+
 * Corrigé erreur dans nail-finder.v6.asm, diviseur oublié dans la définition de la constante **ALARM_FREQ_HIGH**.
 
 * Idée pour augmenter la sensibilité: bobinné autour d'une ferrite en forme de de **U** pour concentrer les lignes du champ magnétique entre les 2 branches du **U**. 

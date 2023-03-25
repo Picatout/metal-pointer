@@ -6,6 +6,11 @@ The Tiny BASIC application  [metal-detector.bas](metal-detector.bas)
 
 * [revision notes](#revisions) 
 
+##  Final choice for circuit 
+
+At the end I chose the **L-R** time constant variation circuit for the stability and a coil with ferrite for sensivity . See [bare-metal/readme.md](bare-metal/readme.md) for more information. 
+
+
 ## Schematic, version 2
 
 ![metal-detector-schematic.png](metal-detector-schematic.png)
