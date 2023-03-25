@@ -37,7 +37,7 @@ ALARM_LED_ODR = PC_ODR
 ALARM_LED_DDR = PC_DDR 
 ALARM_LED_CR1 = PC_CR1 
 ALARM_SOUND = 4 ; PD4 
-ALARM_FREQ_HIGH=FMSTR; 12Mhz/1000 
+ALARM_FREQ_HIGH=FMSTR/1000; 12Mhz/1000 
 ALARM_FREQ_LOW=FMSTR/700; 12Mhz/700
 ADC_INPUT = 3
 ADC_ODR = PD_ODR
@@ -50,8 +50,12 @@ SENSIVITY = 2
 ;; period value for TIMER1 frequency 
 ;; period = 1 msec. 
 TMR1_PERIOD= 12000 
-; pulse width 10uS 
+; pulse width 12uS 
 TMR1_DC= 1000
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+;;  usefull macros 
+;;;;;;;;;;;;;;;;;;;;;;;;
 
     ; turn on green LED 
     .macro _gled_on 

@@ -1,3 +1,10 @@
+### 2023-03-25 
+
+* Corrigé erreur dans nail-finder.v6.asm, diviseur oublié dans la définition de la constante **ALARM_FREQ_HIGH**.
+
+* Idée pour augmenter la sensibilité: bobinné autour d'une ferrite en forme de de **U** pour concentrer les lignes du champ magnétique entre les 2 branches du **U**. 
+  Projet suspendu jusqu'à réception d'une ferrite cylindrique.
+
 ### 2023-03-24 
 
 * Modification de [debug.asm](debug.asm) pour réception des caractères en mode interruption. Ce qui permet d'utiliser **CTRL+C** pour réinitialiser le MCU pendant les sessions de débogage.
