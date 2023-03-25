@@ -2,7 +2,7 @@
 
 After many different circuits test I decided for the following circuit giving the best result.
 * Use **STM8S103F3M**  SOIC-20 format  MCU. 
-* Coded in assembly [nail-finder.v6.asm](bare-metal/nail-finder.v6.asm).
+* Coded in assembly [nail-finder.v6.asm](nail-finder.v6.asm).
 
 ![nail-finder.v7.png](nail-finder.v7.png)
 
