@@ -8,6 +8,7 @@
 ;-----------------------
 
     .module UART_DEBUG 
+    .include "inc/ascii.inc" 
 
 .if DEBUG 
 
@@ -15,6 +16,10 @@
 ; define these constants 
 ; according to selected UART 
 ;-----------------------------
+STM8S105=0 
+STM8S103=1
+
+.if STM8S105 
 UART_BRR1=UART2_BRR1 
 UART_BRR2=UART2_BRR2 
 UART_DR=UART2_DR 
@@ -23,7 +28,31 @@ UART_CR1=UART2_CR1
 UART_CR2=UART2_CR2 
 UART_CLK_PCKENR=CLK_PCKENR1 
 UART_CLK_PCKENR_UART=CLK_PCKENR1_UART2 
+.else ; STM8S103  
+UART_BRR1=UART1_BRR1 
+UART_BRR2=UART1_BRR2 
+UART_DR=UART1_DR 
+UART_SR=UART1_SR 
+UART_CR1=UART1_CR1
+UART_CR2=UART1_CR2 
+UART_CLK_PCKENR=CLK_PCKENR1 
+UART_CLK_PCKENR_UART=CLK_PCKENR1_UART1 
+.endif 
 
+;----------------------
+; UART receive handler 
+;----------------------
+uart_rx_handler:
+    clr RX_CHAR 
+    btjf UART_SR,#UART_SR_RXNE,9$ 
+    ld a,UART_DR
+    ld RX_CHAR, a
+    call uart_putc   
+    cp a,#CTRL_C 
+    jrne 9$ 
+    jp sofware_reset
+9$:
+    iret 
 
 ;------------------
 ; initialize UART 
@@ -47,9 +76,9 @@ uart_set_baud::
 	ld a,xl 
     ld UART_BRR1,a 
     clr UART_DR
-	mov UART_CR2,#((1<<UART_CR2_TEN)|(1<<UART_CR2_REN))
-	bset UART_CR2,#UART_CR2_SBK
-    btjf UART_SR,#UART_SR_TC,.
+	mov UART_CR2,#((1<<UART_CR2_TEN)|(1<<UART_CR2_REN)|(1<<UART_CR2_RIEN))
+;	bset UART_CR2,#UART_CR2_SBK
+;    btjf UART_SR,#UART_SR_TC,.
 	pop a 
 	ret
 
@@ -68,10 +97,7 @@ uart_putc::
 ; output:
 ;   A    0| char 
 uart_getc::
-    clr a 
-    btjf UART_SR,#UART_SR_RXNE,9$
-    ld a,UART_DR 
-9$:
+    ld a,RX_CHAR 
     ret 
 
 ;------------------

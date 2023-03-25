@@ -1,6 +1,8 @@
 ;--------------------
 ; bare metal version 
 ; on STM8S103f3m 
+; 
+; last change: 2023-03-24
 ;--------------------
 
     .module METAL_POINTER 
@@ -12,15 +14,9 @@
 
 ; defined for debug.asm 
 DEBUG=0
+; master clock frequency 12Mhz crystal 
 FMSTR=12000000 ; 
 
-MODE_1=1
-
-.if MODE_1 
-MODE_2=0 
-.else 
-MODE_2=1
-.endif 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; peripherals usage 
@@ -55,7 +51,7 @@ SENSIVITY = 2
 ;; period = 1 msec. 
 TMR1_PERIOD= 12000 
 ; pulse width 10uS 
-TMR1_DC= 500
+TMR1_DC= 1000
 
     ; turn on green LED 
     .macro _gled_on 
@@ -113,6 +109,9 @@ CHANGE: .blkb 1 ; 1=up|-1=down|0=same
 COUNT: .blkb 1 ; count changes in same direction 
 LAST:  .blkw 1 ; last sample value 
 DELTA: .blkb 1 ; 128*(average-last) 
+.if DEBUG 
+RX_CHAR: .blkb 1 ;  keep character received from uart 
+.endif 
 
 ;**********************************************************
         .area SSEG (ABS) ; STACK
@@ -144,7 +143,11 @@ DELTA: .blkb 1 ; 128*(average-last)
 	int NonHandledInterrupt	; irq15
 	int NonHandledInterrupt	; irq16
 	int NonHandledInterrupt	; irq17
+.if DEBUG
+    int uart_rx_handler
+.else 
 	int NonHandledInterrupt	; irq18
+.endif 
 	int NonHandledInterrupt	; irq19
 	int NonHandledInterrupt	; irq20
 	int NonHandledInterrupt	; irq21
@@ -164,21 +167,14 @@ DELTA: .blkb 1 ; 128*(average-last)
 ; non handled interrupt reset MCU
 NonHandledInterrupt:
         iret 
+
+sofware_reset:
         ld a, #0x80
         ld WWDG_CR,a ; WWDG_CR used to reset mcu
 
 ; used for count down timer 
 Timer4Handler:
 	clr TIM4_SR
-.if MODE_2 
-    tnz ALARM_DLY
-    jreq 0$ 
-    dec ALARM_DLY
-    jrne 0$
-    _leds_off 
-    _sound_off
-0$:  
-.endif    
     ldw x,CNTDWN 
     jreq 1$
     decw x 
@@ -284,57 +280,15 @@ timer2_init:
     bset ADC1_CR2,#ADC1_CR2_ALIGN
     bset ADC1_CR1,#0 ; turn on ADC  
 
- 
-;;;;;;;;;;;;;;;;;
-;  mode 2 
-;;;;;;;;;;;;;;;;;
-.if MODE_2 
-mode.2: 
+; signal power up 
     call power_on 
-    call sample 
-    ldw LAST,x 
-.if DEBUG 
-    call clear_screen 
-    call uart_prt_int 
-    ld a,#13 
-    call uart_putc 
-.endif 
-reset: 
-    clr COUNT 
-    clr CHANGE 
-test: 
-    call sample
-    cpw x,LAST 
-    jreq test    
-    jrpl 2$ 
-    dec CHANGE 
-    jra 3$ 
-2$: inc CHANGE 
-3$: ldw LAST, x
-    inc COUNT 
-    ld a,COUNT
-    cp a,#4 
-    jrmi test  
-    ld a, CHANGE 
-    jrpl 4$ 
-    neg a 
-4$: 
-    cp a,#SENSIVITY 
-    jrmi test  
-.if DEBUG 
-call uart_prt_int
-.endif 
-    call alarm 
-    jra reset 
-.endif 
 
-;;;;;;;;;;;
-; mode 1 
-;;;;;;;;;;;
-init_detector: 
+;-------------------------
 ; initialize detector 
 ; by reading 32 samples
-; and calculate mean 
+; and compute average 
+;--------------------------
+init_detector: 
     push #32
     clrw x 
     ldw SAMPLES_SUM,x  
@@ -356,7 +310,9 @@ init_detector:
 .endif 
     pop a 
 
-; begin detection 
+;-----------------
+; detector loop 
+;-----------------
 detector:
     mov DELTA,#255
     call sample 
@@ -396,18 +352,14 @@ alarm:
 2$:
     call set_tone_freq 
     _sound_on 
-.if MODE_2
-    mov ALARM_DLY, #10 
-.else 
     ldw x,#10 
     call pause 
     _leds_off 
     _sound_off 
-.endif 
     ret 
 
 ;--------------------
-;  sample detector 
+;  sample reader
 ;--------------------
 sample:
     call flush_cap 
@@ -432,7 +384,8 @@ adc_read:
     ret 
 
 ;------------------------
-; pulse inductor 
+; send short pulse 
+; to inductor 
 ;------------------------
 send_pulse:
     bset TIM1_CCER2,#TIM_CCER2_CC4E 
@@ -468,10 +421,9 @@ pause:
     jrne 1$ 
     ret 
 
-.if MODE_2 
 ;--------------------------
 ; power on signal 
-; LED and sound on for 
+; LEDs and sound on for 
 ; 200 milliseconds
 ;--------------------------
 power_on:
@@ -482,7 +434,6 @@ power_on:
     _leds_off 
     _sound_off
     ret 
-.endif 
 
 ;---------------------
 ; set tone frequence

@@ -1,3 +1,9 @@
+### 2023-03-24 
+
+* Modification de [debug.asm](debug.asm) pour réception des caractères en mode interruption. Ce qui permet d'utiliser **CTRL+C** pour réinitialiser le MCU pendant les sessions de débogage.
+
+* Test supplémentaires avec différentes bobines et largeur d'impulsion sans résultat convaincant.
+
 ### 2023-03-23
 
 6ième version du projet. Meilleur résultat à date. 

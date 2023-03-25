@@ -10,7 +10,7 @@ SDAS=sdasstm8
 SDCC=sdcc
 CFLAGS=-mstm8 
 # sources files 
-MAIN_FILE=nail-finder.v5.asm
+MAIN_FILE=nail-finder.v6.asm
 SRC=$(MAIN_FILE) debug.asm 
 INC=inc/
 INCLUDES=$(INC)stm8s103f3.inc $(INC)macros.inc  
