@@ -1,3 +1,8 @@
+### 2023-03-26
+
+* Complété assemblage du PCB circuit final. 
+![bare-metal/final-assembly.png](bare-metal/final-assembly.png)
+
 ### 2023-03-25 
 
 * Création d'un nouveau projet KiCAD pour le circuit choisi comme version finale du projet. [kiCAD/nail-finder/nail-finder.kicad_pro](kiCAD/nail-finder/nail-finder.kicad_pro).
