@@ -36,6 +36,13 @@ When a metal object come close to **L1** it modify the inductance then **C6-L1**
 <a id="revisions"></a>
 ## Revisions 
 
+### version 7 (STM8103F3M) final circuit 
+
+* Final source code:  [nail-finder.v6.asm](bare-metal/nail-finder.v6.asm)
+
+![bare-metal/naile-finder.v7.png](bare-metal/nail-finder.v7.png)
+
+
 ### version 6 (STM8S103F3M) assembly coded. 
 
 Best result up to now. see [bare-metal/readme.md](bare-metal/readme.md) for detail.

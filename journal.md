@@ -1,3 +1,15 @@
+### 2023-03-29 
+
+* Essaie d'une nouvelle bobine monté sur une ferrite cylindrique de 12,3mm de diamètre et de 41,3mm de longueur. la bobine est enroulée avec des spires jointives sur 25mm de longueur à partir d'un millimètre de l'extrémité sensible. Le bobinage a 2 couches de fils et l'inductance mesurée est de 622uH. [spécification de la ferrite](bare-metal/ferrite-rod-4077484611.pdf)
+
+* Modification du firmware [nail-finder.v6.asm](bare-metal/nail-finder.v6.asm).
+
+* Modification de la schématique pour la nouvelle valeur de **L1**. 
+
+* dernière schématique:
+
+![schématique](bare-metal/nail-finder.v7.png)
+
 ### 2023-03-26
 
 * Complété assemblage du PCB circuit final. 

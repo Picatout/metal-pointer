@@ -712,6 +712,25 @@ TIM_CCER2_CC4P=5
 ;  TIM1_CCMR4_CC4S1 = (1)
  TIM1_CCMR4_CC4S0 = (0)
 
+; timer 1 break register bits 
+TIM1_BKR_LOCK=0 ;(0:1) lock configuration
+TIM1_BKR_OSSI=2 ; Off state selection for idle mode
+TIM1_BKR_OSSR=3 ; Off state selection for Run mode
+TIM1_BKR_BKE=4  ; Break enable
+TIM1_BKR_BKP=5  ; Break polarity
+TIM1_BKR_AOE=6  ; Automatic output enable
+TIM1_BKR_MOE=7  ; Main output enable
+
+; timer 1 output idle state register bits 
+TIM1_OISR_OS1=0 
+TIM1_OISR_OSN1=1 
+TIM1_OISR_OS2=2 
+TIM1_OISR_OSN2=3 
+TIM1_OISR_OS3=4 
+TIM1_OISR_OSN3=5
+TIM1_OISR_OS4=6 
+TIM1_OISR_OSN4=7
+
 ; Timer 2 - 16-bit timer
  TIM2_CR1  = (0x5300)
  TIM2_IER  = (0x5303)

@@ -46,12 +46,15 @@ ADC_BIT = 2
 ;; detector sensivity
 ;; increment to reduce false detection 
 SENSIVITY = 2
+; how many samples to skip for average 
+; adjustment 
+SKIP_MAX=4
 
 ;; period value for TIMER1 frequency 
 ;; period = 1 msec. 
 TMR1_PERIOD= 12000 
 ; pulse width 12uS 
-TMR1_DC= 1000
+TMR1_DC= 12000-1500
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  usefull macros 
@@ -111,8 +114,10 @@ CNTDWN: .blkw 1 ; count down timer
 PERIOD: .blkw 1 ; PWM period count 
 CHANGE: .blkb 1 ; 1=up|-1=down|0=same 
 COUNT: .blkb 1 ; count changes in same direction 
+SKIP:  .blkw 1 ; count of sample to skip for average adjust  
 LAST:  .blkw 1 ; last sample value 
-DELTA: .blkb 1 ; 128*(average-last) 
+SLOPE: .blkw 1 ; inc if DELTA>0 else dec if < 0  
+DELTA: .blkw 1 ; average-last 
 .if DEBUG 
 RX_CHAR: .blkb 1 ;  keep character received from uart 
 .endif 
@@ -270,13 +275,20 @@ timer2_init:
     mov TIM1_ARRH,#TMR1_PERIOD>>8  
     mov TIM1_ARRL,#TMR1_PERIOD&0xff 
     mov TIM1_CCR4H,#TMR1_DC>>8
-    mov TIM1_CCR4L,#TMR1_DC&0xff 
-;    bset TIM1_CCER2,#TIM_CCER2_CC4E
-    mov TIM1_CCMR4,#(7<<4)|(1<<3) ;OC4M=7|OC4PE=1 ; PWM mode 1 
+    mov TIM1_CCR4L,#TMR1_DC&0xff
+    bset TIM1_OISR,#TIM1_OISR_OS4 
+    bset TIM1_CCER2,#TIM_CCER2_CC4E
+    mov TIM1_CCMR4,#(6<<4)|(1<<3) ;OC4M=7|OC4PE=1 ; PWM mode 1 
 ; one pulse mode  
     bset TIM1_CR1,#TIM_CR1_OPM 
 ; enable PWM output 
-	bset TIM1_BKR,#7 ; enable PWM output   
+	bset TIM1_BKR,#TIM1_BKR_MOE ; enable PWM output   
+
+.if 0
+0$:
+call send_pulse
+jra 0$
+.endif 
 
 ; enable ADC 
     bset ADC1_TDRL,#ADC_INPUT
@@ -297,7 +309,7 @@ init_detector:
     clrw x 
     ldw SAMPLES_SUM,x  
 2$: 
-    call sample 
+    call sample
     addw x, SAMPLES_SUM
     ldw SAMPLES_SUM, x
     dec (1,sp)
@@ -305,7 +317,6 @@ init_detector:
     ldw y,#32
     divw x,y 
     ldw SAMPLES_AVG,x 
-
 .if DEBUG 
     call clear_screen
     call uart_prt_int
@@ -318,38 +329,49 @@ init_detector:
 ; detector loop 
 ;-----------------
 detector:
-    mov DELTA,#255
     call sample 
-    pushw x 
     ldw x,SAMPLES_AVG 
-    subw x,(1,sp)
+    subw x,LAST 
+    ldw DELTA,x 
     jrpl 3$
-    negw x  
-    clr DELTA 
-3$: cpw x,#SENSIVITY 
-    jrmi 4$ 
+    dec SLOPE 
+    negw x
+    jra 4$  
+3$: 
+    inc SLOPE 
+4$:
+    cpw x,#SENSIVITY 
+    jrpl 5$
+    clr SLOPE 
+    jra detector 
+5$:      
 .if DEBUG 
 call uart_prt_int
 .endif 
     call alarm 
-4$: 
-    ; adjust SAMPLES_AVG 
+    call adjust_avg 
+    jra detector 
+
+adjust_avg:
+    ld a,#SKIP_MAX 
+    cp a,SKIP 
+    jrpl 9$ 
+    clr SKIP 
     ldw x,SAMPLES_SUM  
     subw x,SAMPLES_AVG 
-    addw x,(1,sp)
+    addw x,LAST 
     ldw SAMPLES_SUM,x 
     ldw y,#32 
     divw x,y 
     ldw SAMPLES_AVG,x 
-    popw x 
-    jra detector 
+9$: ret     
 
 ;----------------------
 ; detection alarm 
 ;----------------------
 alarm:
-    tnz DELTA 
-    jrpl 1$ 
+    tnz SLOPE 
+    jrmi 1$ 
     _gled_on
     jra 2$
 1$: _rled_on  
@@ -360,6 +382,7 @@ alarm:
     call pause 
     _leds_off 
     _sound_off 
+    clr SLOPE 
     ret 
 
 ;--------------------
@@ -368,7 +391,8 @@ alarm:
 sample:
     call flush_cap 
     call send_pulse 
-    call adc_read  
+    call adc_read
+    inc SKIP   
     ret 
 
 
@@ -384,7 +408,8 @@ adc_read:
     ld a,ADC1_DRL 
     ld xl,a 
     ld a,ADC1_DRH 
-    ld xh,a 
+    ld xh,a
+    ldw LAST,x  
     ret 
 
 ;------------------------
@@ -392,10 +417,10 @@ adc_read:
 ; to inductor 
 ;------------------------
 send_pulse:
-    bset TIM1_CCER2,#TIM_CCER2_CC4E 
+;    bset TIM1_CCER2,#TIM_CCER2_CC4E 
     bset TIM1_CR1,#TIM_CR1_CEN 
     btjt TIM1_CR1,#TIM_CR1_CEN,.
-    bres TIM1_CCER2,#TIM_CCER2_CC4E 
+;    bres TIM1_CCER2,#TIM_CCER2_CC4E 
     ret 
 
 ;------------------------
@@ -447,8 +472,8 @@ power_on:
 ;--------------------
 set_tone_freq:
     ldw x,#ALARM_FREQ_HIGH 
-    tnz DELTA 
-    jrpl 1$ 
+    tnz SLOPE 
+    jrmi 1$ 
     LDW x,#ALARM_FREQ_LOW 
 1$:
     ld a,xh 

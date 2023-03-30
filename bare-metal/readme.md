@@ -1,5 +1,14 @@
 # Version 7 
 
+## 2023-03-29 
+
+* Improved sensivity. 
+
+* Tried a new coil on rod ferrite. [rod datasheet](ferrite-rod-4077484611.pdf).
+
+* Updated firmware [nail-finder.v6.asm](nail-finder.v6.asm).
+
+
 After many different circuits test I decided for the following circuit giving the best result.
 * Use **STM8S103F3M**  SOIC-20 format  MCU. 
 * Coded in assembly [nail-finder.v6.asm](nail-finder.v6.asm).

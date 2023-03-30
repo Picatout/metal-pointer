@@ -2184,7 +2184,7 @@
     (property "Reference" "L1" (id 0) (at 254 102.8699 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "821uH" (id 1) (at 254 105.4099 0)
+    (property "Value" "622uH" (id 1) (at 254 105.4099 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "" (id 2) (at 251.46 104.14 0)
@@ -2406,7 +2406,7 @@
       (reference "J5") (unit 1) (value "speaker-M") (footprint "")
     )
     (path "/de6f2200-8d4b-4eff-a915-81378430780a"
-      (reference "L1") (unit 1) (value "821uH") (footprint "")
+      (reference "L1") (unit 1) (value "622uH") (footprint "")
     )
     (path "/b702d412-c978-4432-aa09-1137b03add9a"
       (reference "LS1") (unit 1) (value "8 ohm") (footprint "")
