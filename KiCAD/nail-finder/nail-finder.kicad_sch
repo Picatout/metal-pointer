@@ -1512,6 +1512,10 @@
     (effects (font (size 2 2)) (justify left bottom))
     (uuid 275fa02d-4f86-41f4-919e-d6a0f80fb48f)
   )
+  (text "NiMh" (at 139.7 97.79 0)
+    (effects (font (size 1 1)) (justify left bottom))
+    (uuid eebe5af8-0e0a-4887-991f-76aa2fce2a8c)
+  )
 
   (global_label "PC5" (shape input) (at 158.75 151.13 270) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify right))
@@ -2184,7 +2188,7 @@
     (property "Reference" "L1" (id 0) (at 254 102.8699 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "622uH" (id 1) (at 254 105.4099 0)
+    (property "Value" "646uH" (id 1) (at 254 105.4099 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "" (id 2) (at 251.46 104.14 0)
@@ -2235,7 +2239,7 @@
     (property "Reference" "BT1" (id 0) (at 139.7 92.3289 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "4xAA" (id 1) (at 139.7 94.8689 0)
+    (property "Value" "4xAAA" (id 1) (at 139.7 94.8689 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "" (id 2) (at 135.89 92.456 90)
@@ -2355,7 +2359,7 @@
       (reference "#PWR011") (unit 1) (value "GND") (footprint "")
     )
     (path "/ef9ca35e-6855-4809-b64d-a4716953fc4f"
-      (reference "BT1") (unit 1) (value "4xAA") (footprint "")
+      (reference "BT1") (unit 1) (value "4xAAA") (footprint "")
     )
     (path "/47132576-36cf-4e31-bc0a-58b464d2eb98"
       (reference "C1") (unit 1) (value "18pF") (footprint "")
@@ -2406,7 +2410,7 @@
       (reference "J5") (unit 1) (value "speaker-M") (footprint "")
     )
     (path "/de6f2200-8d4b-4eff-a915-81378430780a"
-      (reference "L1") (unit 1) (value "622uH") (footprint "")
+      (reference "L1") (unit 1) (value "646uH") (footprint "")
     )
     (path "/b702d412-c978-4432-aa09-1137b03add9a"
       (reference "LS1") (unit 1) (value "8 ohm") (footprint "")

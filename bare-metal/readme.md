@@ -1,4 +1,28 @@
 # Version 7 
+### 2023-04-05
+
+Last modification du circuit, new coil to increase detection area I replace the rod wounded coil by half cylindral wounded coil. The inductance is a little higher 646µH instead of 622µH. 
+For this coil I used half of cable ferrite as core. 
+
+![cable-ferrite.jpg](cable-ferrite.jpg)
+
+I remove one half from plastic shell to use as core. Using 30 AWG enameled wire . With 2 layers of this wire I measured 644µH. 
+
+![half-cylinder-coil.jpg](half-cylinder-coil.jpg)
+
+![half-cylinder-coil(2).jpg](half-cylinder-coil(2).jpg)
+
+I cutted 2 slot at the bottom of the box to push the coil edges flush to it an used epoxy glue to hold in place.
+
+![box-underneath](box-underneath.jpg)
+
+![coil-inside-box.jpg](coil-inside-box.jpg)
+
+![circuit in box](circuit-in-box.jpg)
+
+![nail finder box](nail-finder-box.jpg)
+
+Demo video [here](https://youtu.be/uCpbacAko6Q).
 
 ## 2023-03-29 
 
@@ -7,6 +31,7 @@
 * Tried a new coil on rod ferrite. [rod datasheet](ferrite-rod-4077484611.pdf).
 
 * Updated firmware [nail-finder.v6.asm](nail-finder.v6.asm).
+
 
 
 After many different circuits test I decided for the following circuit giving the best result.

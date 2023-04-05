@@ -1,3 +1,11 @@
+### 2023-04-05
+
+* Complété l'assemblage final du projet.
+
+![bare-metal/nail-finder-box.jpg](bare-metal/nail-finder-box.jpg)
+
+![bare-metal/circuit-in-box.jpg](bare-metal/circuit-in-box.jpg)
+
 ### 2023-03-29 
 
 * Essaie d'une nouvelle bobine monté sur une ferrite cylindrique de 12,3mm de diamètre et de 41,3mm de longueur. la bobine est enroulée avec des spires jointives sur 25mm de longueur à partir d'un millimètre de l'extrémité sensible. Le bobinage a 2 couches de fils et l'inductance mesurée est de 622uH. [spécification de la ferrite](bare-metal/ferrite-rod-4077484611.pdf)
