@@ -1255,7 +1255,7 @@ Hexadecimal [24-Bits]
                            000002    48 SENSIVITY = 2
                                      49 ; how many samples to skip for average 
                                      50 ; adjustment 
-                           000004    51 SKIP_MAX=4
+                           000003    51 SKIP_MAX=3
                                      52 
                                      53 ;; period value for TIMER1 frequency 
                                      54 ;; period = 1 msec. 
@@ -1535,7 +1535,7 @@ Hexadecimal [24-Bits]
       00816F 72 10 54 01      [ 1]  297     bset ADC1_CR1,#0 ; turn on ADC  
                                     298 
                                     299 ; signal power up 
-      008173 CD 82 72         [ 4]  300     call power_on 
+      008173 CD 82 69         [ 4]  300     call power_on 
                                     301 
                                     302 ;-------------------------
                                     303 ; initialize detector 
@@ -1547,7 +1547,7 @@ Hexadecimal [24-Bits]
       008178 5F               [ 1]  309     clrw x 
       008179 CF 00 01         [ 2]  310     ldw SAMPLES_SUM,x  
       00817C                        311 2$: 
-      00817C CD 82 1C         [ 4]  312     call sample
+      00817C CD 82 13         [ 4]  312     call sample
       00817F 72 BB 00 01      [ 2]  313     addw x, SAMPLES_SUM
       008183 CF 00 01         [ 2]  314     ldw SAMPLES_SUM, x
       008186 0A 01            [ 1]  315     dec (1,sp)
@@ -1567,7 +1567,7 @@ Hexadecimal [24-Bits]
                                     329 ; detector loop 
                                     330 ;-----------------
       008193                        331 detector:
-      008193 CD 82 1C         [ 4]  332     call sample 
+      008193 CD 82 13         [ 4]  332     call sample 
       008196 CE 00 03         [ 2]  333     ldw x,SAMPLES_AVG 
       008199 72 B0 00 0D      [ 2]  334     subw x,LAST 
       00819D CF 00 11         [ 2]  335     ldw DELTA,x 
@@ -1591,184 +1591,188 @@ Hexadecimal [24-Bits]
                            000000   348 .if DEBUG 
                                     349 call uart_prt_int
                                     350 .endif 
-      0081B8 CD 81 E2         [ 4]  351     call alarm 
-      0081BB CD 81 C0         [ 4]  352     call adjust_avg 
+      0081B8 CD 81 D7         [ 4]  351     call alarm 
+      0081BB CD 81 C0         [ 4]  352    call adjust_avg 
       0081BE 20 D3            [ 2]  353     jra detector 
                                     354 
       0081C0                        355 adjust_avg:
-      0081C0 A6 04            [ 1]  356     ld a,#SKIP_MAX 
-      0081C2 C1 00 0B         [ 1]  357     cp a,SKIP 
-      0081C5 2A 1A            [ 1]  358     jrpl 9$ 
-      0081C7 72 5F 00 0B      [ 1]  359     clr SKIP 
-      0081CB CE 00 01         [ 2]  360     ldw x,SAMPLES_SUM  
-      0081CE 72 B0 00 03      [ 2]  361     subw x,SAMPLES_AVG 
-      0081D2 72 BB 00 0D      [ 2]  362     addw x,LAST 
-      0081D6 CF 00 01         [ 2]  363     ldw SAMPLES_SUM,x 
-      0081D9 90 AE 00 20      [ 2]  364     ldw y,#32 
-      0081DD 65               [ 2]  365     divw x,y 
-      0081DE CF 00 03         [ 2]  366     ldw SAMPLES_AVG,x 
-      0081E1 81               [ 4]  367 9$: ret     
-                                    368 
-                                    369 ;----------------------
-                                    370 ; detection alarm 
+                           000000   356 .if 0
+                                    357     ld a,#SKIP_MAX 
+                                    358     cp a,SKIP 
+                                    359     jrpl 9$ 
+                                    360     clr SKIP 
+                                    361 .endif 
+      0081C0 CE 00 01         [ 2]  362     ldw x,SAMPLES_SUM  
+      0081C3 72 B0 00 03      [ 2]  363     subw x,SAMPLES_AVG 
+      0081C7 72 BB 00 0D      [ 2]  364     addw x,LAST 
+      0081CB CF 00 01         [ 2]  365     ldw SAMPLES_SUM,x 
+      0081CE 90 AE 00 20      [ 2]  366     ldw y,#32 
+      0081D2 65               [ 2]  367     divw x,y 
+      0081D3 CF 00 03         [ 2]  368     ldw SAMPLES_AVG,x 
+      0081D6 81               [ 4]  369 9$: ret     
+                                    370 
                                     371 ;----------------------
-      0081E2                        372 alarm:
-      0081E2 72 5D 00 0F      [ 1]  373     tnz SLOPE 
-      0081E6 2B 06            [ 1]  374     jrmi 1$ 
-      000168                        375     _gled_on
-      0081E8 72 17 50 0A      [ 1]    1     bres ALARM_LED_ODR,#ALARM_GLED_BIT 
-      0081EC 20 04            [ 2]  376     jra 2$
-      00016E                        377 1$: _rled_on  
-      0081EE 72 1B 50 0A      [ 1]    1     bres ALARM_LED_ODR,#ALARM_RLED_BIT 
-      0081F2                        378 2$:
-      0081F2 CD 82 9D         [ 4]  379     call set_tone_freq 
-      000175                        380     _sound_on 
-      0081F5 72 10 53 0A      [ 1]    1  	bset TIM2_CCER1,#TIM_CCER1_CC1E
-      0081F9 72 10 53 00      [ 1]    2 	bset TIM2_CR1,#TIM_CR1_CEN
-      0081FD 72 10 53 06      [ 1]    3 	bset TIM2_EGR,#TIM_EGR_UG
-      008201 AE 00 0A         [ 2]  381     ldw x,#10 
-      008204 CD 82 68         [ 4]  382     call pause 
-      000187                        383     _leds_off 
-      000187                          1     _gled_off 
-      008207 72 16 50 0A      [ 1]    1     bset ALARM_LED_ODR,#ALARM_GLED_BIT 
-      00018B                          2     _rled_off 
-      00820B 72 1A 50 0A      [ 1]    1     bset ALARM_LED_ODR,#ALARM_RLED_BIT 
+                                    372 ; detection alarm 
+                                    373 ;----------------------
+      0081D7                        374 alarm:
+      0081D7 72 5D 00 0F      [ 1]  375     tnz SLOPE 
+      0081DB 27 35            [ 1]  376     jreq 9$
+      0081DD 2B 06            [ 1]  377     jrmi 1$ 
+      00015F                        378     _gled_on
+      0081DF 72 17 50 0A      [ 1]    1     bres ALARM_LED_ODR,#ALARM_GLED_BIT 
+      0081E3 20 04            [ 2]  379     jra 2$
+      000165                        380 1$: _rled_on  
+      0081E5 72 1B 50 0A      [ 1]    1     bres ALARM_LED_ODR,#ALARM_RLED_BIT 
+      0081E9                        381 2$:
+      0081E9 CD 82 94         [ 4]  382     call set_tone_freq 
+      00016C                        383     _sound_on 
+      0081EC 72 10 53 0A      [ 1]    1  	bset TIM2_CCER1,#TIM_CCER1_CC1E
+      0081F0 72 10 53 00      [ 1]    2 	bset TIM2_CR1,#TIM_CR1_CEN
+      0081F4 72 10 53 06      [ 1]    3 	bset TIM2_EGR,#TIM_EGR_UG
+      0081F8 AE 00 0A         [ 2]  384     ldw x,#10 
+      0081FB CD 82 5F         [ 4]  385     call pause 
+      00017E                        386     _leds_off 
+      00017E                          1     _gled_off 
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (STMicroelectronics STM8), page 31.
 Hexadecimal [24-Bits]
 
 
 
-      00018F                        384     _sound_off 
-      00820F 72 11 53 0A      [ 1]    1 	bres TIM2_CCER1,#TIM_CCER1_CC1E
-      008213 72 11 53 00      [ 1]    2 	bres TIM2_CR1,#TIM_CR1_CEN 
-      008217 72 5F 00 0F      [ 1]  385     clr SLOPE 
-      00821B 81               [ 4]  386     ret 
-                                    387 
-                                    388 ;--------------------
-                                    389 ;  sample reader
-                                    390 ;--------------------
-      00821C                        391 sample:
-      00821C CD 82 4D         [ 4]  392     call flush_cap 
-      00821F CD 82 43         [ 4]  393     call send_pulse 
-      008222 CD 82 2A         [ 4]  394     call adc_read
-      008225 72 5C 00 0B      [ 1]  395     inc SKIP   
-      008229 81               [ 4]  396     ret 
-                                    397 
-                                    398 
-                                    399 ;------------------------
-                                    400 ; read ADC sample
-                                    401 ; output:
-                                    402 ;    X   sample 
-                                    403 ;-------------------------
-      00822A                        404 adc_read:
-      00822A 35 03 54 00      [ 1]  405     mov ADC1_CSR,#ADC_INPUT 
-      00822E 72 10 54 01      [ 1]  406     bset ADC1_CR1,#0
-      008232 72 0F 54 00 FB   [ 2]  407     btjf ADC1_CSR,#ADC1_CSR_EOC,. 
-      008237 C6 54 05         [ 1]  408     ld a,ADC1_DRL 
-      00823A 97               [ 1]  409     ld xl,a 
-      00823B C6 54 04         [ 1]  410     ld a,ADC1_DRH 
-      00823E 95               [ 1]  411     ld xh,a
-      00823F CF 00 0D         [ 2]  412     ldw LAST,x  
-      008242 81               [ 4]  413     ret 
-                                    414 
-                                    415 ;------------------------
-                                    416 ; send short pulse 
-                                    417 ; to inductor 
-                                    418 ;------------------------
-      008243                        419 send_pulse:
-                                    420 ;    bset TIM1_CCER2,#TIM_CCER2_CC4E 
-      008243 72 10 52 50      [ 1]  421     bset TIM1_CR1,#TIM_CR1_CEN 
-      008247 72 00 52 50 FB   [ 2]  422     btjt TIM1_CR1,#TIM_CR1_CEN,.
-                                    423 ;    bres TIM1_CCER2,#TIM_CCER2_CC4E 
-      00824C 81               [ 4]  424     ret 
-                                    425 
-                                    426 ;------------------------
-                                    427 ;  flush peak detector 
-                                    428 ;  capacitor C19  
-                                    429 ;  pin PB3 
+      0081FE 72 16 50 0A      [ 1]    1     bset ALARM_LED_ODR,#ALARM_GLED_BIT 
+      000182                          2     _rled_off 
+      008202 72 1A 50 0A      [ 1]    1     bset ALARM_LED_ODR,#ALARM_RLED_BIT 
+      000186                        387     _sound_off 
+      008206 72 11 53 0A      [ 1]    1 	bres TIM2_CCER1,#TIM_CCER1_CC1E
+      00820A 72 11 53 00      [ 1]    2 	bres TIM2_CR1,#TIM_CR1_CEN 
+      00820E 72 5F 00 0F      [ 1]  388     clr SLOPE 
+      008212                        389 9$:
+      008212 81               [ 4]  390     ret 
+                                    391 
+                                    392 ;--------------------
+                                    393 ;  sample reader
+                                    394 ;--------------------
+      008213                        395 sample:
+      008213 CD 82 44         [ 4]  396     call flush_cap 
+      008216 CD 82 3A         [ 4]  397     call send_pulse 
+      008219 CD 82 21         [ 4]  398     call adc_read
+      00821C 72 5C 00 0B      [ 1]  399     inc SKIP   
+      008220 81               [ 4]  400     ret 
+                                    401 
+                                    402 
+                                    403 ;------------------------
+                                    404 ; read ADC sample
+                                    405 ; output:
+                                    406 ;    X   sample 
+                                    407 ;-------------------------
+      008221                        408 adc_read:
+      008221 35 03 54 00      [ 1]  409     mov ADC1_CSR,#ADC_INPUT 
+      008225 72 10 54 01      [ 1]  410     bset ADC1_CR1,#0
+      008229 72 0F 54 00 FB   [ 2]  411     btjf ADC1_CSR,#ADC1_CSR_EOC,. 
+      00822E C6 54 05         [ 1]  412     ld a,ADC1_DRL 
+      008231 97               [ 1]  413     ld xl,a 
+      008232 C6 54 04         [ 1]  414     ld a,ADC1_DRH 
+      008235 95               [ 1]  415     ld xh,a
+      008236 CF 00 0D         [ 2]  416     ldw LAST,x  
+      008239 81               [ 4]  417     ret 
+                                    418 
+                                    419 ;------------------------
+                                    420 ; send short pulse 
+                                    421 ; to inductor 
+                                    422 ;------------------------
+      00823A                        423 send_pulse:
+                                    424 ;    bset TIM1_CCER2,#TIM_CCER2_CC4E 
+      00823A 72 10 52 50      [ 1]  425     bset TIM1_CR1,#TIM_CR1_CEN 
+      00823E 72 00 52 50 FB   [ 2]  426     btjt TIM1_CR1,#TIM_CR1_CEN,.
+                                    427 ;    bres TIM1_CCER2,#TIM_CCER2_CC4E 
+      008243 81               [ 4]  428     ret 
+                                    429 
                                     430 ;------------------------
-      00824D                        431 flush_cap: 
-      00824D 72 11 54 01      [ 1]  432     bres ADC1_CR1,#ADC1_CR1_ADON
-      008251 72 14 50 11      [ 1]  433     bset ADC_DDR,#ADC_BIT 
-      008255 72 15 50 0F      [ 1]  434     bres ADC_ODR,#ADC_BIT  
-      008259 AE 00 01         [ 2]  435     ldw x,#1
-      00825C CD 82 68         [ 4]  436     call pause 
+                                    431 ;  flush peak detector 
+                                    432 ;  capacitor C19  
+                                    433 ;  pin PB3 
+                                    434 ;------------------------
+      008244                        435 flush_cap: 
+      008244 72 11 54 01      [ 1]  436     bres ADC1_CR1,#ADC1_CR1_ADON
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (STMicroelectronics STM8), page 32.
 Hexadecimal [24-Bits]
 
 
 
-      00825F 72 15 50 11      [ 1]  437     bres ADC_DDR,#ADC_BIT  
-      008263 72 10 54 01      [ 1]  438     bset ADC1_CR1,#ADC1_CR1_ADON
-      008267 81               [ 4]  439     ret 
-                                    440 
-                                    441 ;------------------------
-                                    442 ; pause msec 
-                                    443 ; input:
-                                    444 ;   x    msec 
+      008248 72 14 50 11      [ 1]  437     bset ADC_DDR,#ADC_BIT 
+      00824C 72 15 50 0F      [ 1]  438     bres ADC_ODR,#ADC_BIT  
+      008250 AE 00 01         [ 2]  439     ldw x,#1
+      008253 CD 82 5F         [ 4]  440     call pause 
+      008256 72 15 50 11      [ 1]  441     bres ADC_DDR,#ADC_BIT  
+      00825A 72 10 54 01      [ 1]  442     bset ADC1_CR1,#ADC1_CR1_ADON
+      00825E 81               [ 4]  443     ret 
+                                    444 
                                     445 ;------------------------
-      008268                        446 pause:
-      008268 CF 00 05         [ 2]  447     ldw CNTDWN,x 
-      00826B 8F               [10]  448 1$: wfi 
-      00826C CE 00 05         [ 2]  449     ldw x,CNTDWN 
-      00826F 26 FA            [ 1]  450     jrne 1$ 
-      008271 81               [ 4]  451     ret 
-                                    452 
-                                    453 ;--------------------------
-                                    454 ; power on signal 
-                                    455 ; LEDs and sound on for 
-                                    456 ; 200 milliseconds
+                                    446 ; pause msec 
+                                    447 ; input:
+                                    448 ;   x    msec 
+                                    449 ;------------------------
+      00825F                        450 pause:
+      00825F CF 00 05         [ 2]  451     ldw CNTDWN,x 
+      008262 8F               [10]  452 1$: wfi 
+      008263 CE 00 05         [ 2]  453     ldw x,CNTDWN 
+      008266 26 FA            [ 1]  454     jrne 1$ 
+      008268 81               [ 4]  455     ret 
+                                    456 
                                     457 ;--------------------------
-      008272                        458 power_on:
-      0001F2                        459     _sound_on 
-      008272 72 10 53 0A      [ 1]    1  	bset TIM2_CCER1,#TIM_CCER1_CC1E
-      008276 72 10 53 00      [ 1]    2 	bset TIM2_CR1,#TIM_CR1_CEN
-      00827A 72 10 53 06      [ 1]    3 	bset TIM2_EGR,#TIM_EGR_UG
-      0001FE                        460     _leds_on 
-      0001FE                          1     _gled_on 
-      00827E 72 17 50 0A      [ 1]    1     bres ALARM_LED_ODR,#ALARM_GLED_BIT 
-      000202                          2     _rled_on 
-      008282 72 1B 50 0A      [ 1]    1     bres ALARM_LED_ODR,#ALARM_RLED_BIT 
-      008286 AE 00 C8         [ 2]  461     ldw x,#200
-      008289 CD 82 68         [ 4]  462     call pause 
-      00020C                        463     _leds_off 
-      00020C                          1     _gled_off 
-      00828C 72 16 50 0A      [ 1]    1     bset ALARM_LED_ODR,#ALARM_GLED_BIT 
-      000210                          2     _rled_off 
-      008290 72 1A 50 0A      [ 1]    1     bset ALARM_LED_ODR,#ALARM_RLED_BIT 
-      000214                        464     _sound_off
-      008294 72 11 53 0A      [ 1]    1 	bres TIM2_CCER1,#TIM_CCER1_CC1E
-      008298 72 11 53 00      [ 1]    2 	bres TIM2_CR1,#TIM_CR1_CEN 
-      00829C 81               [ 4]  465     ret 
-                                    466 
-                                    467 ;---------------------
-                                    468 ; set tone frequence
-                                    469 ; paramters 
-                                    470 ;  ALARM_FREQ constant 
-                                    471 ;  DELTA variable  
-                                    472 ;--------------------
-      00829D                        473 set_tone_freq:
-      00829D AE 2E E0         [ 2]  474     ldw x,#ALARM_FREQ_HIGH 
-      0082A0 72 5D 00 0F      [ 1]  475     tnz SLOPE 
-      0082A4 2B 03            [ 1]  476     jrmi 1$ 
-      0082A6 AE 42 F6         [ 2]  477     LDW x,#ALARM_FREQ_LOW 
-      0082A9                        478 1$:
+                                    458 ; power on signal 
+                                    459 ; LEDs and sound on for 
+                                    460 ; 200 milliseconds
+                                    461 ;--------------------------
+      008269                        462 power_on:
+      0001E9                        463     _sound_on 
+      008269 72 10 53 0A      [ 1]    1  	bset TIM2_CCER1,#TIM_CCER1_CC1E
+      00826D 72 10 53 00      [ 1]    2 	bset TIM2_CR1,#TIM_CR1_CEN
+      008271 72 10 53 06      [ 1]    3 	bset TIM2_EGR,#TIM_EGR_UG
+      0001F5                        464     _leds_on 
+      0001F5                          1     _gled_on 
+      008275 72 17 50 0A      [ 1]    1     bres ALARM_LED_ODR,#ALARM_GLED_BIT 
+      0001F9                          2     _rled_on 
+      008279 72 1B 50 0A      [ 1]    1     bres ALARM_LED_ODR,#ALARM_RLED_BIT 
+      00827D AE 00 C8         [ 2]  465     ldw x,#200
+      008280 CD 82 5F         [ 4]  466     call pause 
+      000203                        467     _leds_off 
+      000203                          1     _gled_off 
+      008283 72 16 50 0A      [ 1]    1     bset ALARM_LED_ODR,#ALARM_GLED_BIT 
+      000207                          2     _rled_off 
+      008287 72 1A 50 0A      [ 1]    1     bset ALARM_LED_ODR,#ALARM_RLED_BIT 
+      00020B                        468     _sound_off
+      00828B 72 11 53 0A      [ 1]    1 	bres TIM2_CCER1,#TIM_CCER1_CC1E
+      00828F 72 11 53 00      [ 1]    2 	bres TIM2_CR1,#TIM_CR1_CEN 
+      008293 81               [ 4]  469     ret 
+                                    470 
+                                    471 ;---------------------
+                                    472 ; set tone frequence
+                                    473 ; paramters 
+                                    474 ;  ALARM_FREQ constant 
+                                    475 ;  DELTA variable  
+                                    476 ;--------------------
+      008294                        477 set_tone_freq:
+      008294 AE 2E E0         [ 2]  478     ldw x,#ALARM_FREQ_HIGH 
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (STMicroelectronics STM8), page 33.
 Hexadecimal [24-Bits]
 
 
 
-      0082A9 9E               [ 1]  479     ld a,xh 
-      0082AA C7 53 0F         [ 1]  480     ld TIM2_ARRH,a 
-      0082AD 9F               [ 1]  481     ld a,xl 
-      0082AE C7 53 19         [ 1]  482     ld TIM2_ARRL,a 
-      0082B1 54               [ 2]  483     srlw x 
-      0082B2 9E               [ 1]  484     ld a,xh 
-      0082B3 C7 53 11         [ 1]  485     ld TIM2_CCR1H,a 
-      0082B6 9F               [ 1]  486     ld a,xl 
-      0082B7 C7 53 12         [ 1]  487     ld TIM2_CCR1L,a 
-      0082BA 72 10 53 06      [ 1]  488     bset TIM2_EGR,#TIM_EGR_UG 
-      0082BE 81               [ 4]  489     ret 
+      008297 72 5D 00 0F      [ 1]  479     tnz SLOPE 
+      00829B 2B 03            [ 1]  480     jrmi 1$ 
+      00829D AE 42 F6         [ 2]  481     LDW x,#ALARM_FREQ_LOW 
+      0082A0                        482 1$:
+      0082A0 9E               [ 1]  483     ld a,xh 
+      0082A1 C7 53 0F         [ 1]  484     ld TIM2_ARRH,a 
+      0082A4 9F               [ 1]  485     ld a,xl 
+      0082A5 C7 53 19         [ 1]  486     ld TIM2_ARRL,a 
+      0082A8 54               [ 2]  487     srlw x 
+      0082A9 9E               [ 1]  488     ld a,xh 
+      0082AA C7 53 11         [ 1]  489     ld TIM2_CCR1H,a 
+      0082AD 9F               [ 1]  490     ld a,xl 
+      0082AE C7 53 12         [ 1]  491     ld TIM2_CCR1L,a 
+      0082B1 72 10 53 06      [ 1]  492     bset TIM2_EGR,#TIM_EGR_UG 
+      0082B5 81               [ 4]  493     ret 
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (STMicroelectronics STM8), page 34.
 Hexadecimal [24-Bits]
 
@@ -2232,7 +2236,7 @@ Symbol Table
 
   2 SAMPLES_   000003 R   |   2 SAMPLES_   000001 R   |     SENSIVIT=  000002 
     SFR_BASE=  005000     |     SFR_END =  0057FF     |     SHARP   =  000023 
-  2 SKIP       00000B R   |     SKIP_MAX=  000004     |   2 SLOPE      00000F R
+  2 SKIP       00000B R   |     SKIP_MAX=  000003     |   2 SLOPE      00000F R
     SPACE   =  000020     |     SPI_CR1 =  005200     |     SPI_CR2 =  005201 
     SPI_CRCP=  005205     |     SPI_DR  =  005204     |     SPI_ICR =  005202 
     SPI_RXCR=  005206     |     SPI_SR  =  005203     |     SPI_TXCR=  005207 
@@ -2338,11 +2342,11 @@ Symbol Table
     UART_SR_=  000005     |     UART_SR_=  000006     |     UART_SR_=  000007 
     UBC     =  004801     |     VT      =  00000B     |     WWDG_CR =  0050D1 
     WWDG_WR =  0050D2     |     XOFF    =  000013     |     XON     =  000011 
-  6 adc_read   0001AA R   |   6 adjust_a   000140 R   |   6 alarm      000162 R
+  6 adc_read   0001A1 R   |   6 adjust_a   000140 R   |   6 alarm      000157 R
   6 clock_in   000014 R   |   6 cold_sta   000014 R   |   6 detector   000113 R
-  6 flush_ca   0001CD R   |   6 init_det   0000F6 R   |   6 pause      0001E8 R
-  6 power_on   0001F2 R   |   6 sample     00019C R   |   6 send_pul   0001C3 R
-  6 set_tone   00021D R   |   6 sofware_   000001 R   |   6 stack_in   00002A R
+  6 flush_ca   0001C4 R   |   6 init_det   0000F6 R   |   6 pause      0001DF R
+  6 power_on   0001E9 R   |   6 sample     000193 R   |   6 send_pul   0001BA R
+  6 set_tone   000214 R   |   6 sofware_   000001 R   |   6 stack_in   00002A R
   6 timer2_i   00008D R   |   6 timer4_i   000074 R
 
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (STMicroelectronics STM8), page 45.
@@ -2356,5 +2360,5 @@ Area Table
    3 SSEG       size      0   flags    8
    4 SSEG1      size    100   flags    8
    5 HOME       size     80   flags    0
-   6 CODE       size    23F   flags    0
+   6 CODE       size    236   flags    0
 

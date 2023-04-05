@@ -48,7 +48,7 @@ ADC_BIT = 2
 SENSIVITY = 2
 ; how many samples to skip for average 
 ; adjustment 
-SKIP_MAX=4
+SKIP_MAX=3
 
 ;; period value for TIMER1 frequency 
 ;; period = 1 msec. 
@@ -349,14 +349,16 @@ detector:
 call uart_prt_int
 .endif 
     call alarm 
-    call adjust_avg 
+   call adjust_avg 
     jra detector 
 
 adjust_avg:
+.if 0
     ld a,#SKIP_MAX 
     cp a,SKIP 
     jrpl 9$ 
     clr SKIP 
+.endif 
     ldw x,SAMPLES_SUM  
     subw x,SAMPLES_AVG 
     addw x,LAST 
@@ -371,6 +373,7 @@ adjust_avg:
 ;----------------------
 alarm:
     tnz SLOPE 
+    jreq 9$
     jrmi 1$ 
     _gled_on
     jra 2$
@@ -383,6 +386,7 @@ alarm:
     _leds_off 
     _sound_off 
     clr SLOPE 
+9$:
     ret 
 
 ;--------------------
