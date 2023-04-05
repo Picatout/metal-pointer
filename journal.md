@@ -1,5 +1,7 @@
 ### 2023-04-05
 
+* Modifié [](bare-metal/nail-finder.v6.asm) pour réduire la persistance de l'alarme après détection.
+
 * Complété l'assemblage final du projet.
 
 ![bare-metal/nail-finder-box.jpg](bare-metal/nail-finder-box.jpg)
