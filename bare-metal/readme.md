@@ -1,12 +1,12 @@
 # Version 7 
 ### 2023-04-05
 
-Last modification du circuit, new coil to increase detection area I replace the rod wounded coil by half cylindral wounded coil. The inductance is a little higher 646µH instead of 622µH. 
+Last circuit modification, new coil to increase detection area. I replaced the rod wounded coil by half cylindral wounded coil. The inductance is a little higher 646µH instead of 622µH. 
 For this coil I used half of cable ferrite as core. 
 
 ![cable-ferrite.jpg](cable-ferrite.jpg)
 
-I remove one half from plastic shell to use as core. Using 30 AWG enameled wire . With 2 layers of this wire I measured 644µH. 
+I removed one half from plastic shell to use as core. Using 30 AWG enameled wire . With 2 layers of this wire I measured 644µH. 
 
 ![half-cylinder-coil.jpg](half-cylinder-coil.jpg)
 
